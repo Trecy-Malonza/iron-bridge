@@ -127,7 +127,7 @@ function Index() {
           height={1088}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/95 via-navy-deep/70 to-navy-deep/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/95 via-navy-deep/55 to-navy-deep/5" />
         <div className="relative mx-auto w-full max-w-[1400px] px-5 pb-16 pt-32 lg:px-10">
           <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.05] text-navy-foreground sm:text-6xl lg:text-7xl">
             The Future
