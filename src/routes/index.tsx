@@ -509,11 +509,11 @@ function Index() {
                 business.
               </p>
               <Link
-                to="/"
-                hash="find-space"
-                className="mt-7 inline-flex items-center gap-3 rounded-md border border-border px-6 py-3.5 text-sm font-semibold text-navy hover:bg-accent"
+                to="/properties"
+                className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-md border border-border px-5 py-3.5 text-sm font-semibold text-navy hover:bg-accent sm:w-auto sm:px-6"
               >
-                <MapPin className="h-4 w-4 text-primary" /> View All Properties on Map <ArrowRight className="h-4 w-4" />
+                <MapPin className="h-4 w-4 shrink-0 text-primary" /> View All Properties on Map
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
             </div>
             <PropertyMap
@@ -535,8 +535,8 @@ function Index() {
             </div>
             <Link
               to="/"
-              hash="contact"
-              className="inline-flex items-center gap-3 rounded-md bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary-dark"
+              hash="find-space"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark sm:w-auto sm:px-7 sm:py-4"
             >
               Get in Touch <ArrowRight className="h-4 w-4" />
             </Link>
