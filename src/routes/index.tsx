@@ -516,15 +516,10 @@ function Index() {
                 <MapPin className="h-4 w-4 text-primary" /> View All Properties on Map <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="relative min-h-[20rem] overflow-hidden rounded-xl bg-surface">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%)]" />
-              {mapPins.map((p) => (
-                <span key={p.label} className="absolute flex items-center gap-1.5" style={{ top: p.top, left: p.left }}>
-                  <MapPin className="h-6 w-6 text-primary" />
-                  <span className="text-xs font-medium text-navy">{p.label}</span>
-                </span>
-              ))}
-            </div>
+            <PropertyMap
+              locations={properties.map((p) => ({ label: p.name, sub: p.location, lat: p.lat, lng: p.lng }))}
+              zoom={12}
+            />
           </div>
 
           {/* CTA */}
