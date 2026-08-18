@@ -19,7 +19,7 @@ import {
   Truck,
   Warehouse,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import businessPark from "@/assets/business-park.jpg";
 import handshake from "@/assets/handshake.jpg";
@@ -31,6 +31,7 @@ import warehouseDusk from "@/assets/warehouse-exterior.jpg";
 import { CenteredEyebrow, Eyebrow } from "@/components/site/Section";
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
+import { PropertyMap } from "@/components/site/PropertyMap";
 import { properties } from "@/data/properties";
 
 export const Route = createFileRoute("/")({
@@ -101,18 +102,16 @@ const team = [
   { name: "Grace W. Kariuki", role: "Head of Client Relations", image: teamGrace, scale: "h-72" },
 ];
 
-const mapPins = [
-  { label: "Nakuru", top: "8%", left: "26%" },
-  { label: "Naivasha", top: "28%", left: "34%" },
-  { label: "Maai Mahiu", top: "44%", left: "40%" },
-  { label: "Nairobi", top: "56%", left: "54%" },
-  { label: "Athi River", top: "70%", left: "62%" },
-  { label: "Mombasa", top: "84%", left: "76%" },
-];
-
 function Index() {
   const [active, setActive] = useState(0);
   const property = properties[active]!;
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = window.setInterval(() => setActive((i) => (i + 1) % properties.length), 5000);
+    return () => window.clearInterval(id);
+  }, [paused]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,18 +139,17 @@ function Index() {
             <br />
             Built for today. Designed for tomorrow.
           </p>
-          <div className="mt-9 flex flex-wrap gap-4">
+          <div className="mt-9 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
             <Link
-              to="/"
-              hash="find-space"
-              className="inline-flex items-center gap-3 bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+              to="/properties"
+              className="inline-flex w-full items-center justify-center gap-3 bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark sm:w-auto sm:px-7 sm:py-4"
             >
               Find Industrial Space <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/"
-              hash="contact"
-              className="inline-flex items-center gap-3 border border-navy-foreground/50 px-7 py-4 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
+              hash="find-space"
+              className="inline-flex w-full items-center justify-center gap-3 border border-navy-foreground/50 px-6 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10 sm:w-auto sm:px-7 sm:py-4"
             >
               Partner With Us <ArrowRight className="h-4 w-4" />
             </Link>
@@ -190,8 +188,8 @@ function Index() {
             </div>
             <Link
               to="/"
-              hash="contact"
-              className="mt-9 inline-flex items-center gap-3 bg-[image:var(--gradient-primary)] px-7 py-4 text-xs font-bold tracking-[0.15em] text-primary-foreground shadow-card"
+              hash="find-space"
+              className="mt-9 inline-flex w-full items-center justify-center gap-3 bg-[image:var(--gradient-primary)] px-6 py-3.5 text-xs font-bold tracking-[0.15em] text-primary-foreground shadow-card sm:w-auto sm:px-7 sm:py-4"
             >
               PARTNER WITH US <ArrowRight className="h-4 w-4" />
             </Link>
@@ -511,22 +509,17 @@ function Index() {
                 business.
               </p>
               <Link
-                to="/"
-                hash="find-space"
-                className="mt-7 inline-flex items-center gap-3 rounded-md border border-border px-6 py-3.5 text-sm font-semibold text-navy hover:bg-accent"
+                to="/properties"
+                className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-md border border-border px-5 py-3.5 text-sm font-semibold text-navy hover:bg-accent sm:w-auto sm:px-6"
               >
-                <MapPin className="h-4 w-4 text-primary" /> View All Properties on Map <ArrowRight className="h-4 w-4" />
+                <MapPin className="h-4 w-4 shrink-0 text-primary" /> View All Properties on Map
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
             </div>
-            <div className="relative min-h-[20rem] overflow-hidden rounded-xl bg-surface">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%)]" />
-              {mapPins.map((p) => (
-                <span key={p.label} className="absolute flex items-center gap-1.5" style={{ top: p.top, left: p.left }}>
-                  <MapPin className="h-6 w-6 text-primary" />
-                  <span className="text-xs font-medium text-navy">{p.label}</span>
-                </span>
-              ))}
-            </div>
+            <PropertyMap
+              locations={properties.map((p) => ({ label: p.name, sub: p.location, lat: p.lat, lng: p.lng }))}
+              zoom={12}
+            />
           </div>
 
           {/* CTA */}
@@ -542,8 +535,8 @@ function Index() {
             </div>
             <Link
               to="/"
-              hash="contact"
-              className="inline-flex items-center gap-3 rounded-md bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary-dark"
+              hash="find-space"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark sm:w-auto sm:px-7 sm:py-4"
             >
               Get in Touch <ArrowRight className="h-4 w-4" />
             </Link>
