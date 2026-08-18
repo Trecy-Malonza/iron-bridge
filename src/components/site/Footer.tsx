@@ -7,8 +7,8 @@ export function Footer() {
   return (
     <footer className="bg-navy-deep text-navy-foreground">
       <div className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-10">
+          <div className="col-span-2 sm:col-span-2 md:col-span-3 lg:col-span-1">
             <Logo variant="light" />
             <p className="mt-5 max-w-[16rem] text-sm text-navy-foreground/70">
               Unlocking the potential of industrialization in Kenya.
@@ -25,30 +25,30 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold tracking-[0.2em] text-primary-foreground/70">QUICK LINKS</h4>
-            <ul className="mt-4 space-y-2.5 text-sm text-navy-foreground/75">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/" hash="who-we-are">About Us</Link></li>
-              <li><Link to="/" hash="services">Our Services</Link></li>
-              <li><Link to="/" hash="find-space">Find Industrial Space</Link></li>
-              <li><Link to="/" hash="contact">Partner With Us</Link></li>
+          <div className="min-w-0">
+            <h4 className="text-[0.7rem] font-semibold tracking-[0.2em] text-primary-foreground/70">QUICK LINKS</h4>
+            <ul className="mt-4 space-y-2.5 break-words text-sm text-navy-foreground/75">
+              <li><Link to="/" className="transition-colors hover:text-navy-foreground">Home</Link></li>
+              <li><Link to="/" hash="who-we-are" className="transition-colors hover:text-navy-foreground">About Us</Link></li>
+              <li><Link to="/" hash="services" className="transition-colors hover:text-navy-foreground">Our Services</Link></li>
+              <li><Link to="/properties" className="transition-colors hover:text-navy-foreground">Find Industrial Space</Link></li>
+              <li><Link to="/" hash="find-space" className="transition-colors hover:text-navy-foreground">Partner With Us</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold tracking-[0.2em] text-primary-foreground/70">RESOURCES</h4>
-            <ul className="mt-4 space-y-2.5 text-sm text-navy-foreground/75">
-              <li><Link to="/careers">Careers</Link></li>
-              <li><Link to="/blog">Blog</Link></li>
-              <li><Link to="/blog">News &amp; Insights</Link></li>
-              <li><Link to="/" hash="team">Our Team</Link></li>
+          <div className="min-w-0">
+            <h4 className="text-[0.7rem] font-semibold tracking-[0.2em] text-primary-foreground/70">RESOURCES</h4>
+            <ul className="mt-4 space-y-2.5 break-words text-sm text-navy-foreground/75">
+              <li><Link to="/careers" className="transition-colors hover:text-navy-foreground">Careers</Link></li>
+              <li><Link to="/blog" className="transition-colors hover:text-navy-foreground">Blog</Link></li>
+              <li><Link to="/blog" className="transition-colors hover:text-navy-foreground">News &amp; Insights</Link></li>
+              <li><Link to="/" hash="team" className="transition-colors hover:text-navy-foreground">Our Team</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold tracking-[0.2em] text-primary-foreground/70">OFFICE HOURS</h4>
-            <ul className="mt-4 space-y-3 text-sm text-navy-foreground/75">
+          <div className="min-w-0">
+            <h4 className="text-[0.7rem] font-semibold tracking-[0.2em] text-primary-foreground/70">OFFICE HOURS</h4>
+            <ul className="mt-4 space-y-3 break-words text-sm text-navy-foreground/75">
               <li className="flex gap-2">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground/60" />
                 <span>Monday – Friday<br />8:30 AM – 5:30 PM</span>
@@ -58,9 +58,9 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold tracking-[0.2em] text-primary-foreground/70">CONTACT US</h4>
-            <ul className="mt-4 space-y-3 text-sm text-navy-foreground/75">
+          <div className="col-span-2 min-w-0 sm:col-span-2 md:col-span-1">
+            <h4 className="text-[0.7rem] font-semibold tracking-[0.2em] text-primary-foreground/70">CONTACT US</h4>
+            <ul className="mt-4 space-y-3 break-words text-sm text-navy-foreground/75">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground/60" />
                 +254 700 000 000
