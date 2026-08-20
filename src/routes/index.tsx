@@ -365,7 +365,6 @@ function Index() {
                     {[
                       { label: "Phone", Icon: Phone },
                       { label: "Email", Icon: Mail },
-                      { label: "WhatsApp", Icon: Phone },
                     ].map(({ label, Icon }, i) => (
                       <label
                         key={label}
@@ -377,6 +376,11 @@ function Index() {
                     ))}
                   </div>
                 </div>
+
+                <div className="sm:col-span-2">
+                  <ChatAssistant />
+                </div>
+
 
                 <button
                   type="submit"
