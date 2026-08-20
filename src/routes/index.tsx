@@ -297,19 +297,36 @@ function Index() {
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-center gap-2">
-                {properties.map((p, i) => (
-                  <button
-                    key={p.slug}
-                    type="button"
-                    aria-label={`Show ${p.name}`}
-                    onClick={() => setActive(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      i === active ? "w-8 bg-primary" : "w-4 bg-border"
-                    }`}
-                  />
-                ))}
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActive((i) => (i - 1 + properties.length) % properties.length)}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
+                >
+                  <ChevronLeft className="h-4 w-4" /> Back
+                </button>
+                <div className="flex items-center gap-2">
+                  {properties.map((p, i) => (
+                    <button
+                      key={p.slug}
+                      type="button"
+                      aria-label={`Show ${p.name}`}
+                      onClick={() => setActive(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === active ? "w-8 bg-primary" : "w-4 bg-border"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActive((i) => (i + 1) % properties.length)}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
+                >
+                  Next <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
+
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 {[
