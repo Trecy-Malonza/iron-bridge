@@ -28,7 +28,9 @@ import teamBrian from "@/assets/team-brian.png";
 import teamCollins from "@/assets/team-collins.png";
 import teamGrace from "@/assets/team-grace.png";
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
+import { ChatAssistant } from "@/components/site/ChatAssistant";
 import { CenteredEyebrow, Eyebrow } from "@/components/site/Section";
+
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 import { PropertyMap } from "@/components/site/PropertyMap";
