@@ -28,7 +28,9 @@ import teamBrian from "@/assets/team-brian.png";
 import teamCollins from "@/assets/team-collins.png";
 import teamGrace from "@/assets/team-grace.png";
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
+import { ChatAssistant } from "@/components/site/ChatAssistant";
 import { CenteredEyebrow, Eyebrow } from "@/components/site/Section";
+
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 import { PropertyMap } from "@/components/site/PropertyMap";
@@ -297,19 +299,36 @@ function Index() {
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-center gap-2">
-                {properties.map((p, i) => (
-                  <button
-                    key={p.slug}
-                    type="button"
-                    aria-label={`Show ${p.name}`}
-                    onClick={() => setActive(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      i === active ? "w-8 bg-primary" : "w-4 bg-border"
-                    }`}
-                  />
-                ))}
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActive((i) => (i - 1 + properties.length) % properties.length)}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
+                >
+                  <ChevronLeft className="h-4 w-4" /> Back
+                </button>
+                <div className="flex items-center gap-2">
+                  {properties.map((p, i) => (
+                    <button
+                      key={p.slug}
+                      type="button"
+                      aria-label={`Show ${p.name}`}
+                      onClick={() => setActive(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === active ? "w-8 bg-primary" : "w-4 bg-border"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActive((i) => (i + 1) % properties.length)}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
+                >
+                  Next <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
+
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 {[
@@ -365,7 +384,6 @@ function Index() {
                     {[
                       { label: "Phone", Icon: Phone },
                       { label: "Email", Icon: Mail },
-                      { label: "WhatsApp", Icon: Phone },
                     ].map(({ label, Icon }, i) => (
                       <label
                         key={label}
@@ -377,6 +395,11 @@ function Index() {
                     ))}
                   </div>
                 </div>
+
+                <div className="sm:col-span-2">
+                  <ChatAssistant />
+                </div>
+
 
                 <button
                   type="submit"
