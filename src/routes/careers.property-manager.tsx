@@ -18,7 +18,7 @@ import warehouseDusk from "@/assets/warehouse-exterior.jpg";
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 
-export const Route = createFileRoute("/careers")({
+export const Route = createFileRoute("/careers/property-manager")({
   head: () => ({
     meta: [
       { title: "Property Manager Vacancy | IronBridge Careers" },
