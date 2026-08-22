@@ -179,7 +179,7 @@ function CareersIndex() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative flex min-h-[480px] items-center overflow-hidden">
         <img
           src={warehouseDusk}
           alt="IronBridge industrial facility at dusk"
@@ -187,10 +187,10 @@ function CareersIndex() {
           height={900}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/95 via-navy-deep/75 to-navy-deep/25" />
-        <div className="relative mx-auto max-w-[1200px] px-5 py-20 lg:px-8 lg:py-24">
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/95 via-navy-deep/80 to-navy-deep/30" />
+        <div className="relative mx-auto w-full max-w-[1200px] px-5 py-20 lg:px-8 lg:py-24">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-navy-foreground/60">Careers</p>
-          <h1 className="mt-4 max-w-xl text-4xl font-extrabold leading-[1.12] tracking-tight text-navy-foreground sm:text-5xl">
+          <h1 className="mt-4 max-w-xl text-4xl font-extrabold leading-[1.12] tracking-tight text-navy-foreground sm:text-[52px]">
             Build the Future
             <br />
             With Us
@@ -201,7 +201,7 @@ function CareersIndex() {
           </p>
           <a
             href="#positions"
-            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-card transition-colors hover:bg-primary-dark sm:w-auto"
+            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-card transition-all hover:-translate-y-0.5 hover:bg-primary-dark sm:w-auto"
           >
             View Open Positions <ArrowRight className="h-4 w-4" />
           </a>
@@ -229,7 +229,7 @@ function CareersIndex() {
       </section>
 
       {/* Positions */}
-      <section id="positions" className="mx-auto max-w-[1200px] scroll-mt-24 px-5 pb-12 pt-16 lg:px-8">
+      <section id="positions" className="mx-auto max-w-[1200px] scroll-mt-24 px-5 pb-14 pt-16 lg:px-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">Open Positions</p>
@@ -272,7 +272,7 @@ function CareersIndex() {
           {visible.map((j) => (
             <article
               key={j.title}
-              className="flex flex-col rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:shadow-float"
+              className="flex flex-col rounded-[14px] border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-muted-foreground/40 hover:shadow-float"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-accent">
                 <j.Icon className="h-5 w-5 text-primary" />
@@ -338,7 +338,7 @@ function CareersIndex() {
 
       {/* CTA */}
       <section id="send-cv" className="mx-auto mb-16 max-w-[1200px] scroll-mt-24 px-5 lg:px-8">
-        <div className="flex flex-col gap-6 rounded-2xl bg-accent p-7 sm:flex-row sm:items-center sm:justify-between sm:px-9">
+        <div className="flex flex-col gap-6 rounded-2xl bg-[#f0f5ff] p-7 sm:flex-row sm:items-center sm:justify-between sm:px-9">
           <div className="flex items-start gap-4.5">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/15">
               <Timer className="h-5 w-5 text-primary" />
