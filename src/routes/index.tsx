@@ -19,7 +19,7 @@ import {
   Truck,
   Warehouse,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import businessPark from "@/assets/business-park.jpg";
 import handshake from "@/assets/handshake.jpg";
@@ -33,6 +33,7 @@ import { CenteredEyebrow, Eyebrow } from "@/components/site/Section";
 
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
+import { PropertyCarousel } from "@/components/site/PropertyCarousel";
 import { PropertyMap } from "@/components/site/PropertyMap";
 import { properties } from "@/data/properties";
 
@@ -105,15 +106,6 @@ const team = [
 ];
 
 function Index() {
-  const [active, setActive] = useState(0);
-  const property = properties[active]!;
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused) return;
-    const id = window.setInterval(() => setActive((i) => (i + 1) % properties.length), 5000);
-    return () => window.clearInterval(id);
-  }, [paused]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -220,146 +212,44 @@ function Index() {
 
       {/* Find industrial space */}
       <section id="find-space" className="scroll-mt-24 bg-surface py-20 lg:py-28">
-        <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
           <CenteredEyebrow>Find Your Next Industrial Space</CenteredEyebrow>
-          <h2 className="mt-5 text-center text-3xl font-extrabold text-navy sm:text-5xl">
+          <h2 className="mt-5 text-center text-3xl font-extrabold tracking-tight text-navy sm:text-5xl">
             Find Your Next Industrial Space
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
-            Tell us what you're looking for, and our team will match you with industrial properties that fit your
-            operational and investment goals.
+          <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Tell us what you're looking for, and our team will match you with industrial properties that fit your operational and investment goals.
           </p>
 
-          <div className="mt-14 grid gap-12 lg:grid-cols-[1.1fr_1fr]">
-            {/* Carousel */}
-            <div>
-              <div className="relative overflow-hidden rounded-2xl shadow-float">
-                <img
-                  src={property.image}
-                  alt={property.name}
-                  width={1200}
-                  height={800}
-                  loading="lazy"
-                  className="h-[26rem] w-full object-cover"
-                />
-                <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-                  <span className="h-2 w-2 rounded-full bg-navy-foreground" /> {property.badge}
-                </span>
-                <button
-                  type="button"
-                  aria-label="Previous property"
-                  onClick={() => setActive((i) => (i - 1 + properties.length) % properties.length)}
-                  className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-navy-deep/50 text-navy-foreground backdrop-blur"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Next property"
-                  onClick={() => setActive((i) => (i + 1) % properties.length)}
-                  className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-navy-deep/50 text-navy-foreground backdrop-blur"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-deep via-navy-deep/85 to-transparent p-6 pt-24 text-navy-foreground">
-                  <div className="flex flex-wrap items-end justify-between gap-3">
-                    <div>
-                      <h3 className="text-2xl font-bold">{property.name}</h3>
-                      <p className="mt-1 flex items-center gap-1.5 text-sm text-navy-foreground/80">
-                        <MapPin className="h-4 w-4" /> {property.location}
-                      </p>
-                    </div>
-                    <p className="flex items-center gap-2 text-sm">
-                      <Warehouse className="h-5 w-5" />
-                      <span>
-                        <span className="block font-semibold">{property.size}</span>
-                        <span className="text-xs text-navy-foreground/70">Built-up Area</span>
-                      </span>
-                    </p>
-                  </div>
-                  <p className="mt-4 max-w-lg text-sm text-navy-foreground/80">{property.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {property.features.map((f) => (
-                      <span
-                        key={f}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-navy-foreground/10 px-3 py-1.5 text-xs"
-                      >
-                        <Truck className="h-3.5 w-3.5" /> {f}
-                      </span>
-                    ))}
-                  </div>
-                  <Link
-                    to="/properties/$slug"
-                    params={{ slug: property.slug }}
-                    className="mt-5 inline-flex items-center gap-3 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-dark"
-                  >
-                    View Property <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActive((i) => (i - 1 + properties.length) % properties.length)}
-                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
-                >
-                  <ChevronLeft className="h-4 w-4" /> Back
-                </button>
-                <div className="flex items-center gap-2">
-                  {properties.map((p, i) => (
-                    <button
-                      key={p.slug}
-                      type="button"
-                      aria-label={`Show ${p.name}`}
-                      onClick={() => setActive(i)}
-                      className={`h-1.5 rounded-full transition-all ${
-                        i === active ? "w-8 bg-primary" : "w-4 bg-border"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActive((i) => (i + 1) % properties.length)}
-                  className="inline-flex items-center gap-2 rounded-md border border-input bg-card px-4 py-2.5 text-sm font-semibold text-navy hover:border-primary hover:text-primary"
-                >
-                  Next <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-
-
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                {[
-                  { Icon: Landmark, big: "120+", small: "Properties Listed" },
-                  { Icon: HardHat, big: "Industrial", small: "Specialists" },
-                  { Icon: MapPin, big: "Nationwide", small: "Coverage" },
-                ].map(({ Icon, big, small }) => (
-                  <div key={big} className="rounded-xl border border-border bg-card p-5 text-center shadow-card">
-                    <Icon className="mx-auto h-6 w-6 text-primary" />
-                    <p className="mt-3 font-display text-lg font-bold text-navy">{big}</p>
-                    <p className="text-xs text-muted-foreground">{small}</p>
-                  </div>
-                ))}
+          <div className="mt-14 grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
+            <div className="flex flex-col items-center">
+              <PropertyCarousel />
+              <div className="mt-7 grid w-full max-w-[520px] gap-3 sm:grid-cols-3">
+                <a href="#properties" className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:border-primary">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><Building2 className="h-5 w-5" /></span>
+                  <span><strong className="block text-sm text-navy">{properties.length}+</strong><span className="text-[0.7rem] text-muted-foreground">Properties Listed</span></span>
+                </a>
+                <a href="#team" className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:border-primary">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><HardHat className="h-5 w-5" /></span>
+                  <span><strong className="block text-sm text-navy">Industrial</strong><span className="text-[0.7rem] text-muted-foreground">Specialists</span></span>
+                </a>
+                <a href="#properties" className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:border-primary">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><MapPin className="h-5 w-5" /></span>
+                  <span><strong className="block text-sm text-navy">Nationwide</strong><span className="text-[0.7rem] text-muted-foreground">Coverage</span></span>
+                </a>
               </div>
             </div>
 
-            {/* Enquiry form */}
-            <div id="contact" className="scroll-mt-24 rounded-2xl border border-border bg-card p-6 shadow-float sm:p-8">
-              <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Factory className="h-6 w-6" />
-                </span>
+            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-float sm:p-7">
+              <div className="flex items-start gap-3.5 border-b border-border pb-5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Search className="h-5 w-5" /></span>
                 <div>
                   <h3 className="text-xl font-bold text-navy">Tell Us What You're Looking For</h3>
-                  <p className="text-xs italic text-muted-foreground">
-                    Can't find the right property? Our team will help you source one.
-                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Can't find the right property? Our team will help you source one.</p>
                 </div>
               </div>
 
-              <form className="mt-7 grid gap-5 sm:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
+              <form className="mt-6 grid gap-4 sm:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
                 <Field label="Full Name" required placeholder="Your full name" />
                 <Field label="Company / Organization" placeholder="Company name" />
                 <Field label="Email Address" required type="email" placeholder="you@example.com" />
@@ -368,46 +258,25 @@ function Index() {
                 <SelectField label="Preferred Location" options={["Maai Mahiu", "Naivasha", "Nakuru", "Nairobi", "Athi River", "Mombasa"]} />
                 <Field label="Space Requirement" placeholder="e.g. 10,000 sqm / 5 acres" />
                 <Field label="Budget (KES)" placeholder="e.g. 500,000,000" />
-
                 <div className="sm:col-span-2">
                   <label className="text-sm font-medium text-navy">Description / Requirements</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Tell us about your business and the type of industrial property you're looking for..."
-                    className="mt-2 w-full rounded-md border border-input bg-surface px-3 py-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-                  />
+                  <textarea rows={4} placeholder="Tell us about your business and the type of industrial property you're looking for..." className="mt-2 w-full rounded-lg border border-input bg-surface px-3 py-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary" />
                 </div>
-
                 <div className="sm:col-span-2">
                   <p className="text-sm font-medium text-navy">Preferred Contact Method</p>
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    {[
-                      { label: "Phone", Icon: Phone },
-                      { label: "Email", Icon: Mail },
-                    ].map(({ label, Icon }, i) => (
-                      <label
-                        key={label}
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-input px-4 py-3 text-sm"
-                      >
+                  <div className="mt-2.5 flex flex-wrap gap-2.5">
+                    {[{ label: "Phone", Icon: Phone }, { label: "Email", Icon: Mail }].map(({ label, Icon }, i) => (
+                      <label key={label} className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-input bg-surface px-4 py-2.5 text-sm transition hover:border-primary">
                         <input type="radio" name="contact-method" defaultChecked={i === 0} className="accent-primary" />
                         <Icon className="h-4 w-4 text-muted-foreground" /> {label}
                       </label>
                     ))}
                   </div>
                 </div>
-
-                <div className="sm:col-span-2">
-                  <ChatAssistant />
-                </div>
-
-
-                <button
-                  type="submit"
-                  className="sm:col-span-2 inline-flex items-center justify-center gap-3 rounded-md bg-[image:var(--gradient-primary)] py-4 text-base font-semibold text-primary-foreground shadow-card"
-                >
+                <div className="sm:col-span-2"><ChatAssistant /></div>
+                <button type="submit" className="sm:col-span-2 inline-flex items-center justify-center gap-3 rounded-xl bg-[image:var(--gradient-primary)] py-3.5 text-base font-semibold text-primary-foreground shadow-card transition hover:-translate-y-0.5">
                   Find My Property <ArrowRight className="h-4 w-4" />
                 </button>
-
                 <p className="sm:col-span-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
                   <Lock className="h-3.5 w-3.5" /> Your information is safe with us. We respond within 24 hours.
                 </p>
@@ -415,9 +284,7 @@ function Index() {
             </div>
           </div>
 
-          <p className="mt-14 text-center text-sm font-semibold text-navy">
-            Strategic Locations. Premium Properties. <span className="text-primary">Lasting Partnerships.</span>
-          </p>
+          <p className="mt-14 text-center text-sm font-semibold text-navy">Strategic Locations. Premium Properties. <span className="text-primary">Lasting Partnerships.</span></p>
         </div>
       </section>
 
