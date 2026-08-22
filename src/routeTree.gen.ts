@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersPropertyManagerRouteImport } from './routes/careers.property-manager'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
@@ -35,6 +36,11 @@ const LoginRoute = LoginRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersIndexRoute = CareersIndexRouteImport.update({
+  id: '/careers/',
+  path: '/careers/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareersPropertyManagerRoute = CareersPropertyManagerRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
+  '/careers/': typeof CareersIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
+  '/careers': typeof CareersIndexRoute
   '/properties': typeof PropertiesIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
+  '/careers/': typeof CareersIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/careers/property-manager'
     | '/properties/$slug'
+    | '/careers/'
     | '/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/careers/property-manager'
     | '/properties/$slug'
+    | '/careers'
     | '/properties'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/careers/property-manager'
     | '/properties/$slug'
+    | '/careers/'
     | '/properties/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   CareersPropertyManagerRoute: typeof CareersPropertyManagerRoute
   PropertiesSlugRoute: typeof PropertiesSlugRoute
+  CareersIndexRoute: typeof CareersIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
 }
 
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/careers/': {
+      id: '/careers/'
+      path: '/careers'
+      fullPath: '/careers/'
+      preLoaderRoute: typeof CareersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/careers/property-manager': {
       id: '/careers/property-manager'
       path: '/careers/property-manager'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   CareersPropertyManagerRoute: CareersPropertyManagerRoute,
   PropertiesSlugRoute: PropertiesSlugRoute,
+  CareersIndexRoute: CareersIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
 }
 export const routeTree = rootRouteImport
