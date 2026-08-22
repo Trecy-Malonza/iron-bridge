@@ -19,7 +19,6 @@ import {
   Truck,
   Warehouse,
 } from "lucide-react";
-import { useState } from "react";
 
 import businessPark from "@/assets/business-park.jpg";
 import handshake from "@/assets/handshake.jpg";
@@ -100,9 +99,9 @@ const pillars = [
 ];
 
 const team = [
-  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian, scale: "h-72" },
-  { name: "Collins K. Kimani", role: "Founder & Chief Executive Officer", image: teamCollins, scale: "h-96" },
   { name: "Grace W. Kariuki", role: "Head of Client Relations", image: teamGrace, scale: "h-72" },
+  { name: "Collins K. Kimani", role: "Founder & Chief Executive Officer", image: teamCollins, scale: "h-96" },
+  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian, scale: "h-72" },
 ];
 
 function Index() {
@@ -351,41 +350,48 @@ function Index() {
       </section>
 
       {/* Team */}
-      <section id="team" className="scroll-mt-24 bg-[image:var(--gradient-surface)] py-20 lg:py-28">
-        <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+      <section id="team" className="scroll-mt-24 bg-card py-20 lg:py-24">
+        <div className="mx-auto max-w-[1100px] px-5 lg:px-6">
           <CenteredEyebrow>Partner With Us</CenteredEyebrow>
-          <h2 className="mt-5 text-center text-3xl font-extrabold text-navy sm:text-5xl">
+          <h2 className="mt-5 text-center text-3xl font-extrabold leading-tight tracking-tight text-navy sm:text-5xl">
             Built on Expertise.
             <br />
             Driven by Partnership.
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-5 max-w-[560px] text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
             Our team combines deep market knowledge, industry experience and a shared commitment to unlocking the
             potential of industrialization in Kenya.
           </p>
 
-          <p className="eyebrow mt-14 text-center">Our Leadership Team</p>
-          <div className="mt-8 grid items-end gap-8 sm:grid-cols-3">
+          <p className="mt-14 text-center text-xs font-extrabold uppercase tracking-[0.12em] text-primary">Our Leadership Team</p>
+          <div className="relative mx-auto mt-8 grid max-w-[880px] items-start gap-10 sm:grid-cols-[1fr_1.15fr_1fr] sm:gap-0">
             {team.map((m, i) => (
-              <div key={m.name} className={`text-center ${i === 1 ? "sm:order-2" : i === 0 ? "sm:order-1" : "sm:order-3"}`}>
-                <img
-                  src={m.image}
-                  alt={`${m.name}, ${m.role}`}
-                  width={768}
-                  height={1024}
-                  loading="lazy"
-                  className={`mx-auto w-auto object-contain ${m.scale}`}
-                />
-                <h3 className="mt-4 text-lg font-bold text-navy">{m.name}</h3>
-                <p className="text-sm text-primary">{m.role}</p>
-                <span className="mt-3 inline-flex h-7 w-7 items-center justify-center rounded bg-primary text-[0.65rem] font-bold text-primary-foreground">
-                  in
-                </span>
+              <div
+                key={m.name}
+                className={i === 1
+                  ? "relative z-10 order-first flex flex-col items-center text-center sm:order-2"
+                  : i === 0
+                    ? "relative z-[1] flex flex-col items-center text-center sm:order-1 sm:translate-x-7"
+                    : "relative z-[1] flex flex-col items-center text-center sm:order-3 sm:-translate-x-7"}
+              >
+                <div className={i === 1 ? "mb-4 w-full max-w-[340px]" : "mb-3.5 w-full max-w-[220px]"}>
+                  <img
+                    src={m.image}
+                    alt={m.name + ", " + m.role}
+                    width={768}
+                    height={1024}
+                    loading="lazy"
+                    className={"mx-auto w-auto object-contain drop-shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition-transform duration-300 hover:scale-[1.04] " + m.scale}
+                  />
+                </div>
+                <h3 className={i === 1 ? "relative z-20 text-[1.05rem] font-bold tracking-tight text-navy" : "relative z-20 text-base font-bold tracking-tight text-navy"}>{m.name}</h3>
+                <p className="relative z-20 mb-2.5 text-sm font-medium text-primary">{m.role}</p>
+                <a href="#contact" aria-label={"Connect with " + m.name + " on LinkedIn"} className="relative z-20 inline-flex h-7 w-7 items-center justify-center rounded-md bg-[#0A66C2] text-[0.65rem] font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#004182]">in</a>
               </div>
             ))}
           </div>
 
-          {/* Map */}
+{/* Map */}
           <div className="mt-20 grid gap-10 rounded-2xl border border-border bg-card p-6 shadow-card lg:grid-cols-[1fr_1.4fr] lg:p-10">
             <div>
               <Eyebrow>Strategic Locations</Eyebrow>
