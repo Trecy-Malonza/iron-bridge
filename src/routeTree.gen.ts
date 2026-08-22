@@ -11,9 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogRouteImport } from './routes/blog'
-import { Route as CareersRouteImport } from './routes/careers'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as CareersPropertyManagerRouteImport } from './routes/careers.property-manager'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
 
@@ -27,11 +27,6 @@ const BlogRoute = BlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CareersRoute = CareersRouteImport.update({
-  id: '/careers',
-  path: '/careers',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -40,6 +35,11 @@ const LoginRoute = LoginRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersPropertyManagerRoute = CareersPropertyManagerRouteImport.update({
+  id: '/careers/property-manager',
+  path: '/careers/property-manager',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
@@ -56,18 +56,18 @@ const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
-  '/careers': typeof CareersRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
-  '/careers': typeof CareersRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties': typeof PropertiesIndexRoute
 }
@@ -75,9 +75,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
-  '/careers': typeof CareersRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties/': typeof PropertiesIndexRoute
 }
@@ -86,27 +86,27 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/blog'
-    | '/careers'
     | '/login'
     | '/signup'
+    | '/careers/property-manager'
     | '/properties/$slug'
     | '/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/blog'
-    | '/careers'
     | '/login'
     | '/signup'
+    | '/careers/property-manager'
     | '/properties/$slug'
     | '/properties'
   id:
     | '__root__'
     | '/'
     | '/blog'
-    | '/careers'
     | '/login'
     | '/signup'
+    | '/careers/property-manager'
     | '/properties/$slug'
     | '/properties/'
   fileRoutesById: FileRoutesById
@@ -114,9 +114,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRoute
-  CareersRoute: typeof CareersRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  CareersPropertyManagerRoute: typeof CareersPropertyManagerRoute
   PropertiesSlugRoute: typeof PropertiesSlugRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
 }
@@ -137,13 +137,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/careers': {
-      id: '/careers'
-      path: '/careers'
-      fullPath: '/careers'
-      preLoaderRoute: typeof CareersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -156,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/property-manager': {
+      id: '/careers/property-manager'
+      path: '/careers/property-manager'
+      fullPath: '/careers/property-manager'
+      preLoaderRoute: typeof CareersPropertyManagerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/': {
@@ -178,9 +178,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRoute,
-  CareersRoute: CareersRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  CareersPropertyManagerRoute: CareersPropertyManagerRoute,
   PropertiesSlugRoute: PropertiesSlugRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
 }
