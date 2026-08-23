@@ -12,13 +12,18 @@ import {
   Lock,
   Mail,
   MapPin,
+  Maximize,
   Phone,
   Search,
   ShieldCheck,
   TrendingUp,
   Truck,
+  User,
+  Wallet,
   Warehouse,
+  type LucideIcon,
 } from "lucide-react";
+
 
 import businessPark from "@/assets/business-park.jpg";
 import handshake from "@/assets/handshake.jpg";
