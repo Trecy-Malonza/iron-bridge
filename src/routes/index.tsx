@@ -450,35 +450,44 @@ function Field({
   placeholder,
   type = "text",
   required,
+  Icon,
 }: {
   label: string;
   placeholder: string;
   type?: string;
   required?: boolean;
+  Icon?: LucideIcon;
 }) {
   return (
-    <div>
-      <label className="text-sm font-medium text-navy">
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[0.82rem] font-semibold text-navy">
         {label} {required && <span className="text-destructive">*</span>}
       </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="mt-2 w-full rounded-md border border-input bg-surface px-3 py-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-      />
+      <div className="relative">
+        {Icon && (
+          <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+        )}
+        <input
+          type={type}
+          placeholder={placeholder}
+          className={`w-full rounded-lg border border-input bg-surface py-2.5 pr-3.5 text-[0.85rem] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 ${
+            Icon ? "pl-9.5" : "pl-3.5"
+          }`}
+        />
+      </div>
     </div>
   );
 }
 
 function SelectField({ label, options, required }: { label: string; options: string[]; required?: boolean }) {
   return (
-    <div>
-      <label className="text-sm font-medium text-navy">
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[0.82rem] font-semibold text-navy">
         {label} {required && <span className="text-destructive">*</span>}
       </label>
       <select
         defaultValue=""
-        className="mt-2 w-full rounded-md border border-input bg-surface px-3 py-3 text-sm text-foreground outline-none focus:border-primary"
+        className="w-full rounded-lg border border-input bg-surface px-3.5 py-2.5 text-[0.85rem] text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
       >
         <option value="" disabled>
           Select {label.toLowerCase()}
@@ -492,3 +501,4 @@ function SelectField({ label, options, required }: { label: string; options: str
     </div>
   );
 }
+
