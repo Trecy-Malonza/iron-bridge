@@ -1,4 +1,4 @@
-import { MessageSquare, Send } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type Msg = { from: "bot" | "user"; text: string };
@@ -33,10 +33,10 @@ function answer(qRaw: string): string {
 }
 
 export function ChatAssistant() {
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { from: "bot", text: "Hi! I'm the IronBridge assistant. Ask me anything about what we do." },
+    { from: "bot", text: "Hi! I'm the IronBridge assistant. Tap a question below to learn more." },
   ]);
-  const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,67 +47,67 @@ export function ChatAssistant() {
     const t = text.trim();
     if (!t) return;
     setMessages((m) => [...m, { from: "user", text: t }, { from: "bot", text: answer(t) }]);
-    setInput("");
   };
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-4">
-      <p className="flex items-center gap-2 text-sm font-semibold text-navy">
-        <MessageSquare className="h-4 w-4 text-primary" /> Chat with us
-      </p>
-      <p className="mt-1 text-xs text-muted-foreground">Quick answers about our properties and services.</p>
-
-      <div ref={scrollRef} className="mt-3 max-h-56 space-y-3 overflow-y-auto pr-1">
-        {messages.map((m, i) => (
-          <div key={i} className={m.from === "user" ? "flex justify-end" : "flex justify-start"}>
-            <p
-              className={`max-w-[85%] rounded-lg px-3 py-2 text-xs leading-relaxed ${
-                m.from === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-border bg-card text-muted-foreground"
-              }`}
-            >
-              {m.text}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {QUICK.map((q) => (
-          <button
-            key={q}
-            type="button"
-            onClick={() => send(q)}
-            className="rounded-full border border-input bg-card px-3 py-1.5 text-[0.7rem] text-navy hover:border-primary hover:text-primary"
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-3 flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              send(input);
-            }
-          }}
-          placeholder="Type your question..."
-          className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-        />
+    <div className="relative">
+      {!open && (
         <button
           type="button"
-          aria-label="Send message"
-          onClick={() => send(input)}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary-dark"
+          onClick={() => setOpen(true)}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm font-semibold text-primary transition hover:bg-primary/20"
         >
-          <Send className="h-4 w-4" />
+          <MessageCircle className="h-4 w-4" /> WeChat — Ask a question
         </button>
-      </div>
+      )}
+
+      {open && (
+        <div className="rounded-xl border border-border bg-surface p-4 shadow-float">
+          <div className="flex items-center justify-between">
+            <p className="flex items-center gap-2 text-sm font-semibold text-navy">
+              <MessageCircle className="h-4 w-4 text-primary" /> WeChat
+            </p>
+            <button
+              type="button"
+              aria-label="Close chat"
+              onClick={() => setOpen(false)}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">Quick answers about our properties and services.</p>
+
+          <div ref={scrollRef} className="mt-3 max-h-56 space-y-3 overflow-y-auto pr-1">
+            {messages.map((m, i) => (
+              <div key={i} className={m.from === "user" ? "flex justify-end" : "flex justify-start"}>
+                <p
+                  className={`max-w-[85%] rounded-lg px-3 py-2 text-xs leading-relaxed ${
+                    m.from === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border bg-card text-muted-foreground"
+                  }`}
+                >
+                  {m.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {QUICK.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => send(q)}
+                className="rounded-full border border-input bg-card px-3 py-1.5 text-[0.7rem] text-navy hover:border-primary hover:text-primary"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
