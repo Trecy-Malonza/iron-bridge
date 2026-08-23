@@ -122,32 +122,16 @@ export function PropertyCarousel() {
         </button>
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={prev}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3.5 py-2 text-[0.8rem] font-semibold text-navy hover:border-primary hover:text-primary"
-        >
-          <ChevronLeft className="h-4 w-4" /> Back
-        </button>
-        <div className="flex items-center gap-1.5">
-          {properties.map((p, i) => (
-            <button
-              key={p.slug}
-              type="button"
-              aria-label={`Show ${p.name}`}
-              onClick={() => setActive(i)}
-              className={`h-2 rounded-full transition-all ${i === active ? "w-6 bg-primary" : "w-2 bg-border"}`}
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={next}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3.5 py-2 text-[0.8rem] font-semibold text-navy hover:border-primary hover:text-primary"
-        >
-          Next <ChevronRight className="h-4 w-4" />
-        </button>
+      <div className="mt-4 flex items-center justify-center gap-1.5">
+        {properties.map((p, i) => (
+          <button
+            key={p.slug}
+            type="button"
+            aria-label={`Show ${p.name}`}
+            onClick={() => setActive(i)}
+            className={`h-2 rounded-full transition-all ${i === active ? "w-6 bg-primary" : "w-2 bg-border"}`}
+          />
+        ))}
       </div>
     </div>
   );
