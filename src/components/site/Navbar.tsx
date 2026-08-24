@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, UserPlus, UserRound, X } from "lucide-react";
 import { useState } from "react";
 
+import { ContactDialog } from "./ContactDialog";
 import { Logo } from "./Logo";
 
 const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] = [
@@ -11,11 +12,12 @@ const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] 
   { label: "Our Team", to: "/", hash: "team" },
   { label: "Careers", to: "/careers" },
   { label: "Blog", to: "/blog" },
-  { label: "Contact Us", to: "/", hash: "contact" },
 ];
 
 export function Navbar({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+
 
   return (
     <header
