@@ -107,9 +107,24 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
                 </Link>
               </li>
             ))}
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setContactOpen(true);
+                }}
+                className="block w-full border-b border-border/60 py-3 text-left text-sm text-foreground/80"
+              >
+                Contact Us
+              </button>
+            </li>
           </ul>
         </div>
       )}
+
+      <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
     </header>
   );
+
 }
