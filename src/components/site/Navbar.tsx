@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, UserPlus, UserRound, X } from "lucide-react";
 import { useState } from "react";
 
+import { ContactDialog } from "./ContactDialog";
 import { Logo } from "./Logo";
 
 const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] = [
@@ -11,11 +12,12 @@ const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] 
   { label: "Our Team", to: "/", hash: "team" },
   { label: "Careers", to: "/careers" },
   { label: "Blog", to: "/blog" },
-  { label: "Contact Us", to: "/", hash: "contact" },
 ];
 
 export function Navbar({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+
 
   return (
     <header
@@ -46,7 +48,21 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
               </Link>
             </li>
           ))}
+          <li>
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
+              className={`text-sm transition-colors ${
+                transparent
+                  ? "text-navy-foreground/85 hover:text-navy-foreground"
+                  : "text-foreground/75 hover:text-primary"
+              }`}
+            >
+              Contact Us
+            </button>
+          </li>
         </ul>
+
 
         <div className="ml-auto flex items-center gap-3 xl:ml-0">
           <Link
@@ -91,9 +107,24 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
                 </Link>
               </li>
             ))}
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setContactOpen(true);
+                }}
+                className="block w-full border-b border-border/60 py-3 text-left text-sm text-foreground/80"
+              >
+                Contact Us
+              </button>
+            </li>
           </ul>
         </div>
       )}
+
+      <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
     </header>
   );
+
 }
