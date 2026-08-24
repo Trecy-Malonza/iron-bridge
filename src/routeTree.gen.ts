@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersPropertyManagerRouteImport } from './routes/careers.property-manager'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
@@ -36,6 +37,11 @@ const LoginRoute = LoginRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareersIndexRoute = CareersIndexRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers/': typeof CareersIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers': typeof CareersIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers/': typeof CareersIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/login'
     | '/signup'
+    | '/api/chat'
     | '/careers/property-manager'
     | '/properties/$slug'
     | '/careers/'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/login'
     | '/signup'
+    | '/api/chat'
     | '/careers/property-manager'
     | '/properties/$slug'
     | '/careers'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/login'
     | '/signup'
+    | '/api/chat'
     | '/careers/property-manager'
     | '/properties/$slug'
     | '/careers/'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ApiChatRoute: typeof ApiChatRoute
   CareersPropertyManagerRoute: typeof CareersPropertyManagerRoute
   PropertiesSlugRoute: typeof PropertiesSlugRoute
   CareersIndexRoute: typeof CareersIndexRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/careers/': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ApiChatRoute: ApiChatRoute,
   CareersPropertyManagerRoute: CareersPropertyManagerRoute,
   PropertiesSlugRoute: PropertiesSlugRoute,
   CareersIndexRoute: CareersIndexRoute,
