@@ -48,7 +48,21 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
               </Link>
             </li>
           ))}
+          <li>
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
+              className={`text-sm transition-colors ${
+                transparent
+                  ? "text-navy-foreground/85 hover:text-navy-foreground"
+                  : "text-foreground/75 hover:text-primary"
+              }`}
+            >
+              Contact Us
+            </button>
+          </li>
         </ul>
+
 
         <div className="ml-auto flex items-center gap-3 xl:ml-0">
           <Link
