@@ -9,7 +9,7 @@ export function Footer() {
       <div className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-10">
           <div className="col-span-2 sm:col-span-2 md:col-span-3 lg:col-span-1">
-            <Logo variant="light" />
+            <Link to="/"><Logo variant="light" /></Link>
             <p className="mt-5 max-w-[16rem] text-sm text-navy-foreground/70">
               Unlocking the potential of industrialization in Kenya.
             </p>
