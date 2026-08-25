@@ -47,17 +47,17 @@ export function PropertyCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative mx-auto w-full max-w-[520px] [perspective:1200px]">
-        <div className="relative h-[34rem] w-full [transform-style:preserve-3d]">
+      <div className="relative mx-auto w-full max-w-[560px] [perspective:1200px]">
+        <div className="relative h-[37rem] w-full [transform-style:preserve-3d]">
           {properties.map((p, i) => (
             <article
               key={p.slug}
-              className={`absolute left-1/2 top-0 w-full max-w-[400px] overflow-hidden rounded-[20px] bg-card shadow-float transition-all duration-500 ease-out ${classFor(
+              className={`absolute left-1/2 top-0 w-full max-w-[440px] overflow-hidden rounded-[20px] bg-card shadow-float transition-all duration-500 ease-out ${classFor(
                 i - active,
                 total,
               )}`}
             >
-              <div className="relative h-[14rem] overflow-hidden bg-navy-deep">
+              <div className="relative h-[17rem] overflow-hidden bg-navy-deep">
                 <img
                   src={p.image}
                   alt={p.name}

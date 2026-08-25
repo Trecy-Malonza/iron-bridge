@@ -300,7 +300,7 @@ function CareersIndex() {
                   to="/careers/property-manager"
                   className="group mt-3 inline-flex items-center gap-1.5 text-[0.85rem] font-semibold text-primary"
                 >
-                  View Details
+                  Apply Now
                   <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               ) : (

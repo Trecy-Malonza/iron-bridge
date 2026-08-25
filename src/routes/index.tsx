@@ -28,7 +28,7 @@ import {
 import businessPark from "@/assets/business-park.jpg";
 import handshake from "@/assets/handshake.jpg";
 import heroPark from "@/assets/hero-industrial-park.jpg";
-import teamBrian from "@/assets/team-brian.png";
+import teamBrian from "@/assets/team-brian.jpg.asset.json";
 import teamCollins from "@/assets/team-collins.png";
 import teamGrace from "@/assets/team-grace.png";
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
@@ -106,7 +106,7 @@ const pillars = [
 const team = [
   { name: "Grace W. Kariuki", role: "Head of Client Relations", image: teamGrace, scale: "h-72" },
   { name: "Collins K. Kimani", role: "Founder & Chief Executive Officer", image: teamCollins, scale: "h-96" },
-  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian, scale: "h-72" },
+  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian.url, scale: "h-72" },
 ];
 
 function Index() {

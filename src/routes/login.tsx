@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, Lock, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-navy-deep px-4 py-12">
@@ -43,7 +44,9 @@ function LoginPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/90 via-navy/30 to-navy/10" />
           <div className="relative flex h-full flex-col justify-between p-8">
-            <Logo variant="light" />
+            <Link to="/">
+              <Logo variant="light" />
+            </Link>
             <div className="text-navy-foreground">
               <h2 className="text-3xl font-bold">Welcome Back</h2>
               <p className="mt-2 max-w-sm text-sm text-navy-foreground/80">
@@ -66,7 +69,10 @@ function LoginPage() {
             <h2 className="text-center text-2xl font-bold text-navy">Log In to Your Account</h2>
             <p className="mt-1 text-center text-sm text-muted-foreground">Enter your credentials to continue</p>
 
-            <form className="mt-8 space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="mt-8 space-y-5" onSubmit={(e) => {
+                e.preventDefault();
+                navigate({ to: "/", hash: "find-space" });
+              }}>
               <div>
                 <label htmlFor="email" className="text-sm font-medium text-navy">Email Address</label>
                 <div className="mt-2 flex items-center rounded-md border border-input px-3 focus-within:border-primary">
