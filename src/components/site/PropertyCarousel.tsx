@@ -6,13 +6,13 @@ import { properties } from "@/data/properties";
 
 const CENTER = "translate-x-[-50%] translate-z-0 scale-100 opacity-100 z-[5] blur-0";
 const RIGHT =
-  "translate-x-[-22%] -translate-z-20 rotate-y-[-8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
+  "translate-x-[-32%] -translate-z-20 rotate-y-[-8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
 const LEFT =
-  "translate-x-[-78%] -translate-z-20 rotate-y-[8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
+  "translate-x-[-68%] -translate-z-20 rotate-y-[8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
 const FAR_RIGHT =
-  "translate-x-[-5%] -translate-z-40 rotate-y-[-12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
+  "translate-x-[-18%] -translate-z-40 rotate-y-[-12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
 const FAR_LEFT =
-  "translate-x-[-95%] -translate-z-40 rotate-y-[12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
+  "translate-x-[-82%] -translate-z-40 rotate-y-[12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
 const HIDDEN = "translate-x-[-50%] -translate-z-52 scale-[0.7] opacity-0 z-0 pointer-events-none";
 
 function classFor(offset: number, total: number) {
