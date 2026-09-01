@@ -226,7 +226,7 @@ function Index() {
           </p>
 
           <div className="mt-14 grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
-            <div className="flex flex-col items-center">
+            <div className="flex w-full flex-col items-center">
               <PropertyCarousel />
               <div className="mt-2 flex w-full max-w-[720px] flex-wrap justify-center gap-3">
                 <Link to="/properties" className="flex min-w-[140px] flex-1 items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:border-primary/40">
