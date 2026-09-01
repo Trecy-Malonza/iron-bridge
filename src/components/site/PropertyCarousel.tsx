@@ -6,13 +6,13 @@ import { properties } from "@/data/properties";
 
 const CENTER = "translate-x-[-50%] translate-z-0 scale-100 opacity-100 z-[5] blur-0";
 const RIGHT =
-  "translate-x-[-22%] -translate-z-20 rotate-y-[-8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
+  "translate-x-[-32%] -translate-z-20 rotate-y-[-8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
 const LEFT =
-  "translate-x-[-78%] -translate-z-20 rotate-y-[8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
+  "translate-x-[-68%] -translate-z-20 rotate-y-[8deg] scale-[0.86] opacity-50 z-[2] blur-[0.8px] pointer-events-none";
 const FAR_RIGHT =
-  "translate-x-[-5%] -translate-z-40 rotate-y-[-12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
+  "translate-x-[-18%] -translate-z-40 rotate-y-[-12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
 const FAR_LEFT =
-  "translate-x-[-95%] -translate-z-40 rotate-y-[12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
+  "translate-x-[-82%] -translate-z-40 rotate-y-[12deg] scale-75 opacity-0 z-[1] blur-[2px] pointer-events-none";
 const HIDDEN = "translate-x-[-50%] -translate-z-52 scale-[0.7] opacity-0 z-0 pointer-events-none";
 
 function classFor(offset: number, total: number) {
@@ -43,26 +43,26 @@ export function PropertyCarousel() {
 
   return (
     <div
-      className="flex flex-col items-center"
+      className="flex w-full flex-col items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative mx-auto w-full max-w-[560px] [perspective:1200px]">
-        <div className="relative h-[37rem] w-full [transform-style:preserve-3d]">
+      <div className="relative mx-auto w-full max-w-[720px] [perspective:1200px]">
+        <div className="relative h-[44rem] w-full [transform-style:preserve-3d]">
           {properties.map((p, i) => (
             <article
               key={p.slug}
-              className={`absolute left-1/2 top-0 w-full max-w-[440px] overflow-hidden rounded-[20px] bg-card shadow-float transition-all duration-500 ease-out ${classFor(
+              className={`absolute left-1/2 top-0 w-full max-w-[560px] overflow-hidden rounded-[20px] bg-card shadow-float transition-all duration-500 ease-out ${classFor(
                 i - active,
                 total,
               )}`}
             >
-              <div className="relative h-[17rem] overflow-hidden bg-navy-deep">
+              <div className="relative h-[22rem] overflow-hidden bg-navy-deep">
                 <img
                   src={p.image}
                   alt={p.name}
-                  width={800}
-                  height={560}
+                  width={960}
+                  height={640}
                   loading="lazy"
                   className="h-full w-full object-cover"
                 />
