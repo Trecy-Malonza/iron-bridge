@@ -275,9 +275,9 @@ function Index() {
                         <Icon className="h-4 w-4 text-muted-foreground" /> {label}
                       </label>
                     ))}
+                    <div className="flex-1"><ChatAssistant /></div>
                   </div>
                 </div>
-                <div className="sm:col-span-2"><ChatAssistant /></div>
                 <button type="submit" className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary py-3.5 text-[0.9rem] font-semibold text-primary-foreground shadow-card transition hover:-translate-y-0.5 hover:bg-primary-dark">
                   Find My Property <ArrowRight className="h-4 w-4" />
                 </button>
