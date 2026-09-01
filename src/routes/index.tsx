@@ -228,7 +228,7 @@ function Index() {
           <div className="mt-14 grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
             <div className="flex flex-col items-center">
               <PropertyCarousel />
-              <div className="mt-2 flex w-full max-w-[480px] flex-wrap justify-center gap-3">
+              <div className="mt-2 flex w-full max-w-[720px] flex-wrap justify-center gap-3">
                 <Link to="/properties" className="flex min-w-[140px] flex-1 items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:border-primary/40">
                   <span className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-[10px] bg-primary/10 text-primary"><Building2 className="h-4.5 w-4.5" /></span>
                   <span><strong className="block text-sm font-bold leading-tight text-navy">{properties.length}+</strong><span className="text-[0.72rem] text-muted-foreground">Properties Listed</span></span>
