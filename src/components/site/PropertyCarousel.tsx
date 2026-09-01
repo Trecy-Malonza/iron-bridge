@@ -43,7 +43,7 @@ export function PropertyCarousel() {
 
   return (
     <div
-      className="flex flex-col items-center"
+      className="flex w-full flex-col items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
