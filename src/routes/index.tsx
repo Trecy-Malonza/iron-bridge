@@ -365,7 +365,7 @@ function Index() {
       </section>
 
       {/* Team */}
-      <section id="team" className="scroll-mt-24 bg-card py-20 lg:py-24">
+      <section id="team" className="scroll-mt-24 py-20 lg:py-24">
         <div className="mx-auto max-w-[1100px] px-5 lg:px-6">
           <CenteredEyebrow>Partner With Us</CenteredEyebrow>
           <h2 className="mt-5 text-center text-3xl font-extrabold leading-tight tracking-tight text-navy sm:text-5xl">
