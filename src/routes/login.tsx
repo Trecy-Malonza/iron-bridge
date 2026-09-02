@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
 import { Logo } from "@/components/site/Logo";
+import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
