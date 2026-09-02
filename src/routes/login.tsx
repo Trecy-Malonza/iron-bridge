@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
 import { Logo } from "@/components/site/Logo";
+import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -28,7 +30,40 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (signInError) {
+      setError(signInError.message);
+      return;
+    }
+    navigate({ to: "/", hash: "find-space" });
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setLoading(false);
+      setError("Google sign-in failed. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/", hash: "find-space" });
+  }
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-navy-deep px-4 py-12">
@@ -69,10 +104,7 @@ function LoginPage() {
             <h2 className="text-center text-2xl font-bold text-navy">Log In to Your Account</h2>
             <p className="mt-1 text-center text-sm text-muted-foreground">Enter your credentials to continue</p>
 
-            <form className="mt-8 space-y-5" onSubmit={(e) => {
-                e.preventDefault();
-                navigate({ to: "/", hash: "find-space" });
-              }}>
+            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="text-sm font-medium text-navy">Email Address</label>
                 <div className="mt-2 flex items-center rounded-md border border-input px-3 focus-within:border-primary">
@@ -80,6 +112,9 @@ function LoginPage() {
                   <input
                     id="email"
                     type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
                     className="w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"
                   />
@@ -93,6 +128,9 @@ function LoginPage() {
                   <input
                     id="password"
                     type={show ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     className="w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"
                   />
@@ -110,11 +148,14 @@ function LoginPage() {
                 <span className="text-primary">Forgot Password?</span>
               </div>
 
+              {error && <p className="text-sm text-destructive">{error}</p>}
+
               <button
                 type="submit"
-                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+                disabled={loading}
+                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
               >
-                Log In
+                {loading ? "Please wait…" : "Log In"}
               </button>
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
@@ -123,10 +164,13 @@ function LoginPage() {
 
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
                 <span className="font-bold text-primary">G</span> Log in with Google
               </button>
+
 
               <p className="text-center text-sm text-muted-foreground">
                 Don't have an account?{" "}
