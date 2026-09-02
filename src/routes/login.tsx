@@ -28,7 +28,40 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (signInError) {
+      setError(signInError.message);
+      return;
+    }
+    navigate({ to: "/", hash: "find-space" });
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setLoading(false);
+      setError("Google sign-in failed. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/", hash: "find-space" });
+  }
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-navy-deep px-4 py-12">
