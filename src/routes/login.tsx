@@ -104,10 +104,7 @@ function LoginPage() {
             <h2 className="text-center text-2xl font-bold text-navy">Log In to Your Account</h2>
             <p className="mt-1 text-center text-sm text-muted-foreground">Enter your credentials to continue</p>
 
-            <form className="mt-8 space-y-5" onSubmit={(e) => {
-                e.preventDefault();
-                navigate({ to: "/", hash: "find-space" });
-              }}>
+            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="text-sm font-medium text-navy">Email Address</label>
                 <div className="mt-2 flex items-center rounded-md border border-input px-3 focus-within:border-primary">
@@ -115,6 +112,9 @@ function LoginPage() {
                   <input
                     id="email"
                     type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
                     className="w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"
                   />
@@ -128,6 +128,9 @@ function LoginPage() {
                   <input
                     id="password"
                     type={show ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     className="w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"
                   />
@@ -145,11 +148,14 @@ function LoginPage() {
                 <span className="text-primary">Forgot Password?</span>
               </div>
 
+              {error && <p className="text-sm text-destructive">{error}</p>}
+
               <button
                 type="submit"
-                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+                disabled={loading}
+                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
               >
-                Log In
+                {loading ? "Please wait…" : "Log In"}
               </button>
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
@@ -158,10 +164,13 @@ function LoginPage() {
 
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent disabled:opacity-60"
               >
                 <span className="font-bold text-primary">G</span> Log in with Google
               </button>
+
 
               <p className="text-center text-sm text-muted-foreground">
                 Don't have an account?{" "}
