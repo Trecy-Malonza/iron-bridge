@@ -1,8 +1,7 @@
 import { MessageCircle, X } from "lucide-react";
 import { useState } from "react";
 
-const CHAT_URL = "https://iron-bridge.lovable.app/chat";
-const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encodeURIComponent(CHAT_URL)}`;
+import qrAsset from "@/assets/wechat-qr.jpeg.asset.json";
 
 export function ChatAssistant() {
   const [open, setOpen] = useState(false);
@@ -29,11 +28,11 @@ export function ChatAssistant() {
               <X className="h-4 w-4" />
             </button>
             <img
-              src={QR_SRC}
-              alt="WeChat QR code"
-              width={220}
-              height={220}
-              className="mt-4 h-[220px] w-[220px] rounded-lg bg-card"
+              src={qrAsset.url}
+              alt="IronBridge Industrial Group WeChat QR code"
+              width={888}
+              height={1200}
+              className="mt-4 h-auto w-[260px] rounded-lg bg-card"
             />
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Bot, CheckCircle2, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { AiChat } from "./AiChat";
+import { Logo } from "./Logo";
 
 export function ContactDialog({
   open,
@@ -40,6 +41,10 @@ export function ContactDialog({
             >
               <X className="h-4 w-4" />
             </button>
+
+            <Link to="/" onClick={close} className="mb-4 inline-block">
+              <Logo />
+            </Link>
 
             <h2 className="text-lg font-bold text-navy">Contact Us</h2>
             <p className="mt-1 text-sm text-muted-foreground">
