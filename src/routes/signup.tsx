@@ -35,6 +35,54 @@ const fields = [
 
 function SignupPage() {
   const navigate = useNavigate();
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setNotice(null);
+    setLoading(true);
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: values["email"] ?? "",
+      password: values["password"] ?? "",
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          full_name: values["name"] ?? "",
+          company: values["company"] ?? "",
+          phone: values["phone"] ?? "",
+        },
+      },
+    });
+    setLoading(false);
+    if (signUpError) {
+      setError(signUpError.message);
+      return;
+    }
+    if (!data.session) {
+      setNotice("Check your email to confirm your account, then log in.");
+      return;
+    }
+    navigate({ to: "/", hash: "find-space" });
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setLoading(false);
+      setError("Google sign-up failed. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/", hash: "find-space" });
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-navy-deep px-4 py-12">
@@ -47,10 +95,7 @@ function SignupPage() {
               Join IronBridge and start your industrial search
             </p>
 
-            <form className="mt-8 space-y-4" onSubmit={(e) => {
-                e.preventDefault();
-                navigate({ to: "/", hash: "find-space" });
-              }}>
+            <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
               {fields.map(({ id, label, type, placeholder, Icon }) => (
                 <div key={id}>
                   <label htmlFor={id} className="text-sm font-medium text-navy">{label}</label>
@@ -59,6 +104,9 @@ function SignupPage() {
                     <input
                       id={id}
                       type={type}
+                      required={id === "email" || id === "password"}
+                      value={values[id] ?? ""}
+                      onChange={(e) => setValues((v) => ({ ...v, [id]: e.target.value }))}
                       placeholder={placeholder}
                       className="w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground"
                     />
@@ -66,11 +114,28 @@ function SignupPage() {
                 </div>
               ))}
 
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              {notice && <p className="text-sm text-primary">{notice}</p>}
+
               <button
                 type="submit"
-                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+                disabled={loading}
+                className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
               >
-                Sign Up
+                {loading ? "Please wait…" : "Sign Up"}
+              </button>
+
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent disabled:opacity-60"
+              >
+                <span className="font-bold text-primary">G</span> Sign up with Google
               </button>
 
               <p className="text-center text-sm text-muted-foreground">
@@ -78,6 +143,7 @@ function SignupPage() {
                 <Link to="/login" className="font-semibold text-primary">Log In</Link>
               </p>
             </form>
+
           </div>
         </div>
 
