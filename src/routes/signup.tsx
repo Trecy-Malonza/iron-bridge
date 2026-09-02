@@ -1,8 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Building2, Lock, Mail, Phone, ShieldCheck, UserRound } from "lucide-react";
+import { useState } from "react";
 
 import warehouseDusk from "@/assets/warehouse-grade-a.jpg";
 import { Logo } from "@/components/site/Logo";
+import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
