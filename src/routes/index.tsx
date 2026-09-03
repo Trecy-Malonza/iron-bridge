@@ -25,10 +25,10 @@ import {
 } from "lucide-react";
 
 
-import businessPark from "@/assets/business-park.jpg";
+import servicesBg from "@/assets/services-bg.jpg.asset.json";
 import handshake from "@/assets/handshake.jpg";
 import heroPark from "@/assets/hero-industrial-park.jpg";
-import teamBrian from "@/assets/team-brian.jpg.asset.json";
+import teamBrian from "@/assets/team-brian-new.png.asset.json";
 import teamCollins from "@/assets/team-collins.png";
 import teamGrace from "@/assets/team-grace.png";
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
@@ -305,7 +305,7 @@ function Index() {
       {/* Services */}
       <section id="services" className="relative scroll-mt-24 overflow-hidden py-20 lg:py-28">
         <img
-          src={businessPark}
+          src={servicesBg.url}
           alt="IronBridge Business Park glass office building"
           width={1920}
           height={1088}
