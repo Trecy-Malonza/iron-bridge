@@ -93,21 +93,20 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
 
 
         <div className="ml-auto flex items-center gap-3 xl:ml-0">
-          {isAdmin && (
-            <Link
-              to="/admin"
-              aria-label="Open admin dashboard"
-              title="Admin dashboard"
-              className={`inline-flex items-center gap-2 rounded-md border px-3 py-2.5 text-sm font-medium transition-colors ${
-                transparent
-                  ? "border-navy-foreground/40 text-navy-foreground hover:bg-navy-foreground/10"
-                  : "border-border text-foreground hover:bg-accent"
-              }`}
-            >
-              <Shield className="h-4 w-4" />
-              <span className="hidden lg:inline">Admin</span>
-            </Link>
-          )}
+          <Link
+            to="/admin"
+            aria-label="Open admin dashboard"
+            title="Admin dashboard"
+            className={`inline-flex items-center gap-2 rounded-md border px-3 py-2.5 text-sm font-medium transition-colors ${
+              transparent
+                ? "border-navy-foreground/40 text-navy-foreground hover:bg-navy-foreground/10"
+                : "border-border text-foreground hover:bg-accent"
+            }`}
+          >
+            <Shield className="h-4 w-4" />
+            <span className="hidden lg:inline">Admin</span>
+          </Link>
+
           <Link
             to="/login"
             className={`hidden items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium transition-colors sm:inline-flex ${
