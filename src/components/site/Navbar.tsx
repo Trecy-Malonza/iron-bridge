@@ -19,7 +19,7 @@ const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] 
 export function Navbar({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let active = true;
