@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, UserPlus, UserRound, X } from "lucide-react";
-import { useState } from "react";
+import { Menu, Shield, UserPlus, UserRound, X } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { supabase } from "@/integrations/supabase/client";
 
 import { ContactDialog } from "./ContactDialog";
 import { Logo } from "./Logo";
