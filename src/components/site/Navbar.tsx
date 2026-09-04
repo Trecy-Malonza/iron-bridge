@@ -150,6 +150,15 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
               </li>
             ))}
             <li>
+              <Link
+                to="/admin"
+                onClick={() => setOpen(false)}
+                className="block border-b border-border/60 py-3 text-sm text-foreground/80"
+              >
+                Admin Dashboard
+              </Link>
+            </li>
+            <li>
               <button
                 type="button"
                 onClick={() => {
@@ -161,6 +170,7 @@ export function Navbar({ transparent = false }: { transparent?: boolean }) {
                 Contact Us
               </button>
             </li>
+
           </ul>
         </div>
       )}
