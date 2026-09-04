@@ -19,6 +19,32 @@ const links: { label: string; to: "/" | "/blog" | "/careers"; hash?: string }[] 
 export function Navbar({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    async function checkAdmin() {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        if (active) setIsAdmin(false);
+        return;
+      }
+      const { data: role } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (active) setIsAdmin(Boolean(role));
+    }
+    void checkAdmin();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => void checkAdmin());
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
 
 
   return (
