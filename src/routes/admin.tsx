@@ -30,6 +30,7 @@ import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import "@/styles/admin-dashboard.css";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -62,7 +63,6 @@ export const Route = createFileRoute("/admin")({
       { name: "robots", content: "noindex, nofollow" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "stylesheet", href: "/src/styles/admin-dashboard.css" }],
   }),
   component: AdminDashboard,
 });
