@@ -62,7 +62,6 @@ export const Route = createFileRoute("/admin")({
       { name: "robots", content: "noindex, nofollow" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "stylesheet", href: "/src/styles/admin-dashboard.css" }],
   }),
   component: AdminDashboard,
 });
