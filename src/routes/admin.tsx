@@ -246,7 +246,17 @@ function AdminDashboard() {
               onDelete={deleteCareer}
             />
           )}
-          {view !== "dashboard" && view !== "careers" && <PlaceholderView title={view[0]?.toUpperCase() + view.slice(1)} />}
+          {view === "properties" && <PropertiesView />}
+          {view === "leads" && <LeadsView />}
+          {view === "inquiries" && <InquiriesView />}
+          {view === "clients" && <ClientsView />}
+          {view === "blog" && <BlogView />}
+          {view === "media" && <MediaView />}
+          {view === "pages" && <PagesView />}
+          {view === "users" && <UsersView />}
+          {view === "roles" && <RolesView />}
+          {view === "settings" && <SettingsView />}
+
         </main>
       </div>
 
