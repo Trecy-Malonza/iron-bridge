@@ -70,7 +70,7 @@ export const Route = createFileRoute("/admin")({
 
 type Career = Tables<"careers">;
 type CareerForm = Omit<TablesInsert<"careers">, "id" | "created_at" | "updated_at">;
-type View = "dashboard" | "properties" | "careers" | "leads" | "inquiries" | "clients" | "blog" | "media" | "pages" | "users" | "roles" | "settings";
+type View = "dashboard" | "properties" | "categories" | "locations" | "amenities" | "careers" | "leads" | "inquiries" | "clients" | "blog" | "media" | "pages" | "users" | "roles" | "settings";
 
 const emptyForm: CareerForm = {
   title: "",
@@ -186,9 +186,9 @@ function AdminDashboard() {
           <div className="ib-admin-nav-section">PROPERTY MANAGEMENT</div>
           <AdminNavItem icon={<Building2 />} label="Properties" active={view === "properties"} onClick={() => selectView("properties")} />
           <AdminNavItem icon={<Plus />} label="Add New Property" sub active={false} onClick={() => selectView("properties")} />
-          <AdminNavItem icon={<ClipboardList />} label="Categories" active={false} onClick={() => selectView("properties")} />
-          <AdminNavItem icon={<MapPin />} label="Locations" active={false} onClick={() => selectView("properties")} />
-          <AdminNavItem icon={<Shield />} label="Amenities" active={false} onClick={() => selectView("properties")} />
+          <AdminNavItem icon={<ClipboardList />} label="Categories" active={view === "categories"} onClick={() => selectView("categories")} />
+          <AdminNavItem icon={<MapPin />} label="Locations" active={view === "locations"} onClick={() => selectView("locations")} />
+          <AdminNavItem icon={<Shield />} label="Amenities" active={view === "amenities"} onClick={() => selectView("amenities")} />
           <div className="ib-admin-nav-section">CRM &amp; LEADS</div>
           <AdminNavItem icon={<Users />} label="Leads" active={view === "leads"} onClick={() => selectView("leads")} />
           <AdminNavItem icon={<MessageSquare />} label="Inquiries" active={view === "inquiries"} onClick={() => selectView("inquiries")} />
@@ -248,6 +248,9 @@ function AdminDashboard() {
             />
           )}
           {view === "properties" && <PropertiesView />}
+          {view === "categories" && <CategoriesView />}
+          {view === "locations" && <LocationsView />}
+          {view === "amenities" && <AmenitiesView />}
           {view === "leads" && <LeadsView />}
           {view === "inquiries" && <InquiriesView />}
           {view === "clients" && <ClientsView />}
@@ -347,6 +350,95 @@ function PropertiesView() {
                 <td>{property.size}</td>
                 <td><span className="ib-admin-status published">{property.badge}</span></td>
                 <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${property.name}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${property.name}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function CategoriesView() {
+  const categories = [
+    { name: "Grade A Warehouse", detail: "Modern high-spec warehousing with dock loading." },
+    { name: "Cold Storage", detail: "Temperature-controlled space for perishable goods." },
+    { name: "Industrial Godown", detail: "High-eaves storage with strong road access." },
+    { name: "Logistics Hub", detail: "Cross-docking and container yard facilities." },
+    { name: "Light Industrial", detail: "Flexible units for assembly and light manufacturing." },
+    { name: "Industrial Land", detail: "Serviced parcels ready for build-to-suit." },
+  ];
+  const counts = (name: string) => properties.filter((p) => p.name.toLowerCase().includes(name.split(" ")[0]!.toLowerCase())).length;
+  return (
+    <>
+      <PageHeader title="Categories" subtitle="Property types used to organise the public listings." action={<Button><Plus /> Add Category</Button>} />
+      <DataCard title="Property Categories" subtitle="Each category groups listings shown on the website.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Category</th><th>Description</th><th>Listings</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {categories.map((c) => (
+              <tr key={c.name}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><ClipboardList /></span><div><strong>{c.name}</strong><small>{c.detail}</small></div></div></td>
+                <td>{c.detail}</td>
+                <td>{counts(c.name)}</td>
+                <td><span className="ib-admin-status published">Active</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${c.name}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${c.name}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function LocationsView() {
+  return (
+    <>
+      <PageHeader title="Locations" subtitle="Every town and industrial area where IronBridge has space." action={<Button><Plus /> Add Location</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<MapPin />} tone="purple" value={String(new Set(properties.map((p) => p.location)).size)} label="Locations" detail="Across Kenya" />
+        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Listings Mapped" detail="With coordinates" />
+      </div>
+      <DataCard title="Mapped Locations" subtitle="Coordinates power the map on the properties page.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Location</th><th>Property</th><th>Coordinates</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {properties.map((p) => (
+              <tr key={p.slug}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><MapPin /></span><div><strong>{p.location}</strong><small>{p.size}</small></div></div></td>
+                <td>{p.name}</td>
+                <td>{p.lat.toFixed(4)}, {p.lng.toFixed(4)}</td>
+                <td><span className="ib-admin-status published">Mapped</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${p.location}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${p.location}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function AmenitiesView() {
+  const amenities = Array.from(new Set(properties.flatMap((p) => p.features)));
+  return (
+    <>
+      <PageHeader title="Amenities" subtitle="Features tagged on each industrial space." action={<Button><Plus /> Add Amenity</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<Shield />} tone="teal" value={String(amenities.length)} label="Amenities" detail="In use across listings" />
+        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Listings Tagged" detail="All properties" />
+      </div>
+      <DataCard title="Amenity List" subtitle="Shown as tags on property cards and detail pages.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Amenity</th><th>Used By</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {amenities.map((a) => (
+              <tr key={a}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Shield /></span><div><strong>{a}</strong><small>Property feature tag</small></div></div></td>
+                <td>{properties.filter((p) => p.features.includes(a)).map((p) => p.name).join(", ")}</td>
+                <td><span className="ib-admin-status published">Active</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${a}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${a}`}><Trash2 /></Button></div></td>
               </tr>
             ))}
           </tbody>
