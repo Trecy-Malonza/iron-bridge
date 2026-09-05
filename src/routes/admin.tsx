@@ -309,4 +309,353 @@ function CareerDialog({ form, editing, saving, onChange, onClose, onSubmit }: { 
   return <div className="ib-admin-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="ib-admin-dialog" role="dialog" aria-modal="true" aria-labelledby="career-dialog-title"><div className="ib-admin-dialog-header"><div><h2 id="career-dialog-title">{editing ? "Edit Career" : "Add New Career"}</h2><p>Keep the public careers page up to date.</p></div><Button variant="ghost" size="icon" aria-label="Close career form" onClick={onClose}><X /></Button></div><form onSubmit={onSubmit} className="ib-admin-form"><div className="ib-admin-form-grid"><label>Job Title<input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="e.g. Property Manager" /></label><label>Department<input required value={form.department} onChange={(event) => update("department", event.target.value)} placeholder="e.g. Operations" /></label><label>Location<input required value={form.location} onChange={(event) => update("location", event.target.value)} placeholder="e.g. Nairobi, Kenya" /></label><label>Employment Type<select value={form.employment_type} onChange={(event) => update("employment_type", event.target.value)}><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></label><label>Experience<input required value={form.experience} onChange={(event) => update("experience", event.target.value)} placeholder="e.g. 3-5 Yrs Exp" /></label><label>Status<select value={form.status} onChange={(event) => update("status", event.target.value)}><option>Published</option><option>Draft</option></select></label></div><label>Short Summary<textarea required rows={3} value={form.summary} onChange={(event) => update("summary", event.target.value)} placeholder="A concise description shown on the careers page." /></label><label>Full Description<textarea required rows={5} value={form.description} onChange={(event) => update("description", event.target.value)} placeholder="Describe the role, responsibilities and requirements." /></label><div className="ib-admin-dialog-actions"><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save Changes" : "Add Career"}</Button></div></form></section></div>;
 }
 
-function PlaceholderView({ title }: { title: string }) { return <div className="ib-admin-placeholder"><BarChart3 /><h1>{title}</h1><p>This workspace is ready for your next content workflow.</p></div>; }
+function PageHeader({ title, subtitle, action }: { title: string; subtitle: string; action?: React.ReactNode }) {
+  return <div className="ib-admin-page-header"><div><h1>{title}</h1><p>{subtitle}</p></div>{action}</div>;
+}
+
+function DataCard({ title, subtitle, children, action }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <section className="ib-admin-card">
+      <div className="ib-admin-card-header">
+        <div><h3>{title}</h3>{subtitle && <p className="ib-admin-card-subtitle">{subtitle}</p>}</div>
+        {action}
+      </div>
+      <div className="ib-admin-table-wrap">{children}</div>
+    </section>
+  );
+}
+
+function PropertiesView() {
+  return (
+    <>
+      <PageHeader title="Properties" subtitle="Industrial space currently listed on the public website." action={<Button><Plus /> Add New Property</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Total Properties" detail="All listings" />
+        <StatTile icon={<CheckCircle2 />} tone="green" value={String(properties.length)} label="Available" detail="Visible publicly" />
+        <StatTile icon={<MapPin />} tone="purple" value="5" label="Locations" detail="Across Kenya" />
+        <StatTile icon={<BarChart3 />} tone="orange" value="47,500" label="Total SQM" detail="Portfolio size" />
+      </div>
+      <DataCard title="Property Listings" subtitle="Every industrial space shown to visitors." action={<Button variant="outline" size="sm"><Plus /> Add Property</Button>}>
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Property</th><th>Location</th><th>Size</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {properties.map((property) => (
+              <tr key={property.slug}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Building2 /></span><div><strong>{property.name}</strong><small>{property.description}</small></div></div></td>
+                <td>{property.location}</td>
+                <td>{property.size}</td>
+                <td><span className="ib-admin-status published">{property.badge}</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${property.name}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${property.name}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+const leads = [
+  { name: "Daniel Mwangi", company: "Rift Logistics Ltd", email: "daniel@riftlogistics.co.ke", phone: "+254 712 004 118", interest: "Grade A Warehouse", status: "New" },
+  { name: "Amina Yusuf", company: "Coastline Freight", email: "amina@coastlinefreight.com", phone: "+254 733 887 221", interest: "Logistics Hub", status: "Contacted" },
+  { name: "Peter Kariuki", company: "Fresh Valley Produce", email: "peter@freshvalley.co.ke", phone: "+254 720 551 903", interest: "Cold Storage Facility", status: "Qualified" },
+  { name: "Sarah Njeri", company: "Njeri Manufacturing", email: "sarah@njerimfg.co.ke", phone: "+254 701 442 660", interest: "Light Industrial Unit", status: "Converted" },
+];
+
+function LeadsView() {
+  return (
+    <>
+      <PageHeader title="Leads" subtitle="Enquiries captured from the property finder form." action={<Button><Plus /> Add Lead</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<Users />} tone="blue" value="24" label="Total Leads" detail="All time" />
+        <StatTile icon={<Bell />} tone="orange" value="8" label="New" detail="Awaiting first contact" />
+        <StatTile icon={<ClipboardList />} tone="purple" value="9" label="Qualified" detail="In discussion" />
+        <StatTile icon={<CheckCircle2 />} tone="green" value="7" label="Converted" detail="This quarter" />
+      </div>
+      <DataCard title="Recent Leads" subtitle="Follow up on the newest enquiries first.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Lead</th><th>Contact</th><th>Interested In</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {leads.map((lead) => (
+              <tr key={lead.email}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><UserRound /></span><div><strong>{lead.name}</strong><small>{lead.company}</small></div></div></td>
+                <td>{lead.email}<br /><small>{lead.phone}</small></td>
+                <td>{lead.interest}</td>
+                <td><span className={`ib-admin-status ${lead.status === "Converted" ? "published" : "draft"}`}>{lead.status}</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Email ${lead.name}`}><MessageSquare /></Button><Button variant="ghost" size="icon" aria-label={`Edit ${lead.name}`}><Pencil /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+const inquiries = [
+  { subject: "Availability of 20,000 sqm space", from: "logistics@savannahgroup.co.ke", received: "Today, 08:12", status: "New" },
+  { subject: "Lease terms for Athi River cold store", from: "procurement@chillfresh.co.ke", received: "Yesterday, 16:40", status: "Replied" },
+  { subject: "Site visit request — Maai Mahiu", from: "ops@bluelineparcels.com", received: "2 Sep, 11:05", status: "Scheduled" },
+  { subject: "Build-to-suit enquiry", from: "info@kenpackltd.co.ke", received: "31 Aug, 09:22", status: "Replied" },
+];
+
+function InquiriesView() {
+  return (
+    <>
+      <PageHeader title="Inquiries" subtitle="Messages sent through the contact and chat forms." />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<MessageSquare />} tone="blue" value="12" label="Total Inquiries" detail="This month" />
+        <StatTile icon={<Bell />} tone="orange" value="4" label="Awaiting Reply" detail="Needs attention" />
+        <StatTile icon={<CheckCircle2 />} tone="green" value="8" label="Resolved" detail="Closed out" />
+      </div>
+      <DataCard title="Inbox" subtitle="Reply within 24 hours to keep response times strong.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Subject</th><th>From</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {inquiries.map((item) => (
+              <tr key={item.subject}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><MessageSquare /></span><div><strong>{item.subject}</strong><small>{item.from}</small></div></div></td>
+                <td>{item.from}</td>
+                <td>{item.received}</td>
+                <td><span className={`ib-admin-status ${item.status === "New" ? "draft" : "published"}`}>{item.status}</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Reply to ${item.subject}`}><MessageSquare /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${item.subject}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+const clients = [
+  { name: "Savannah Logistics Group", contact: "Mercy Achieng", space: "Grade A Warehouse — 12,000 sqm", since: "Jan 2024", status: "Active" },
+  { name: "ChillFresh Kenya", contact: "Victor Omondi", space: "Cold Storage Facility — 8,500 sqm", since: "Aug 2024", status: "Active" },
+  { name: "Blueline Parcels", contact: "Faith Wanjiru", space: "Logistics Hub — 18,000 sqm", since: "Mar 2025", status: "Active" },
+  { name: "KenPack Ltd", contact: "Joseph Mutua", space: "Light Industrial Unit — 3,800 sqm", since: "Nov 2023", status: "Renewal Due" },
+];
+
+function ClientsView() {
+  return (
+    <>
+      <PageHeader title="Clients" subtitle="Tenants and buyers currently working with IronBridge." action={<Button><Plus /> Add Client</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<UserRound />} tone="blue" value="18" label="Total Clients" detail="Active accounts" />
+        <StatTile icon={<Building2 />} tone="purple" value="42,300" label="Leased SQM" detail="Under management" />
+        <StatTile icon={<Bell />} tone="orange" value="3" label="Renewals Due" detail="Next 90 days" />
+      </div>
+      <DataCard title="Client Accounts" subtitle="Relationship owners and occupied space.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Client</th><th>Main Contact</th><th>Space</th><th>Client Since</th><th>Status</th></tr></thead>
+          <tbody>
+            {clients.map((client) => (
+              <tr key={client.name}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Building2 /></span><div><strong>{client.name}</strong><small>{client.space}</small></div></div></td>
+                <td>{client.contact}</td>
+                <td>{client.space}</td>
+                <td>{client.since}</td>
+                <td><span className={`ib-admin-status ${client.status === "Active" ? "published" : "draft"}`}>{client.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+const posts = [
+  { title: "Why Maai Mahiu Is Kenya's Next Industrial Frontier", category: "Market Insights", author: "Brian O.", date: "2 Sep 2026", status: "Published" },
+  { title: "Cold Chain Demand Reshapes Warehouse Design", category: "Market Insights", author: "Grace W. Kariuki", date: "24 Aug 2026", status: "Published" },
+  { title: "IronBridge Opens New Logistics Hub", category: "Company News", author: "Collins K. Kimani", date: "12 Aug 2026", status: "Published" },
+  { title: "Choosing Between Leasing and Build-to-Suit", category: "Guides", author: "Brian O.", date: "—", status: "Draft" },
+];
+
+function BlogView() {
+  return (
+    <>
+      <PageHeader title="Blog Posts" subtitle="Articles published on the insights page." action={<Button><Plus /> New Post</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<FileText />} tone="blue" value="4" label="Total Posts" detail="All articles" />
+        <StatTile icon={<CheckCircle2 />} tone="green" value="3" label="Published" detail="Live on site" />
+        <StatTile icon={<Pencil />} tone="orange" value="1" label="Drafts" detail="Work in progress" />
+      </div>
+      <DataCard title="Articles" subtitle="Write, edit and publish industrial market insights." action={<Button variant="outline" size="sm"><Plus /> New Post</Button>}>
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {posts.map((post) => (
+              <tr key={post.title}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><FileText /></span><div><strong>{post.title}</strong><small>{post.category}</small></div></div></td>
+                <td>{post.category}</td>
+                <td>{post.author}</td>
+                <td>{post.date}</td>
+                <td><span className={`ib-admin-status ${post.status.toLowerCase()}`}>{post.status}</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${post.title}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${post.title}`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function MediaView() {
+  return (
+    <>
+      <PageHeader title="Media Library" subtitle="Photography and illustrations used across the website." action={<Button><Plus /> Upload Media</Button>} />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<Image />} tone="blue" value={String(properties.length + 6)} label="Total Files" detail="Images in use" />
+        <StatTile icon={<Building2 />} tone="purple" value={String(properties.length)} label="Property Images" detail="Listing photos" />
+        <StatTile icon={<UserRound />} tone="teal" value="3" label="Team Photos" detail="Leadership portraits" />
+      </div>
+      <DataCard title="Files" subtitle="Every asset referenced by the public pages.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>File</th><th>Used On</th><th>Type</th><th>Actions</th></tr></thead>
+          <tbody>
+            {properties.map((property) => (
+              <tr key={property.slug}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Image /></span><div><strong>{property.name} image</strong><small>{property.location}</small></div></div></td>
+                <td>Properties</td>
+                <td>Image</td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Replace ${property.name} image`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${property.name} image`}><Trash2 /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+const pages = [
+  { name: "Home", path: "/", status: "Published" },
+  { name: "Properties", path: "/properties", status: "Published" },
+  { name: "Careers", path: "/careers", status: "Published" },
+  { name: "Blog & Insights", path: "/blog", status: "Published" },
+  { name: "Chat Assistant", path: "/chat", status: "Published" },
+];
+
+function PagesView() {
+  return (
+    <>
+      <PageHeader title="Pages" subtitle="Public pages available on the website." action={<Button><Plus /> Add Page</Button>} />
+      <DataCard title="Site Pages" subtitle="Everything a visitor can reach.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Page</th><th>Address</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {pages.map((page) => (
+              <tr key={page.path}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><FileText /></span><div><strong>{page.name}</strong><small>{page.path}</small></div></div></td>
+                <td>{page.path}</td>
+                <td><span className="ib-admin-status published">{page.status}</span></td>
+                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${page.name}`}><Pencil /></Button></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function UsersView() {
+  const [users, setUsers] = useState<{ user_id: string; role: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase.from("user_roles").select("user_id, role");
+      setUsers(data ?? []);
+      setLoading(false);
+    })();
+  }, []);
+
+  return (
+    <>
+      <PageHeader title="Users" subtitle="Accounts that can sign in to IronBridge." />
+      <div className="ib-admin-stat-grid">
+        <StatTile icon={<Users />} tone="blue" value={String(users.length)} label="Accounts With Roles" detail="Assigned access" />
+        <StatTile icon={<Shield />} tone="purple" value={String(users.filter((user) => user.role === "admin").length)} label="Administrators" detail="Full dashboard access" />
+      </div>
+      <DataCard title="Team Accounts" subtitle="Roles decide who can open this dashboard.">
+        {loading ? <div className="ib-admin-empty">Loading accounts…</div> : users.length === 0 ? <div className="ib-admin-empty">No roles assigned yet.</div> : (
+          <table className="ib-admin-data-table">
+            <thead><tr><th>Account</th><th>Role</th><th>Access</th></tr></thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={`${user.user_id}-${user.role}`}>
+                  <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><UserRound /></span><div><strong>{user.user_id.slice(0, 8)}…</strong><small>Signed-in account</small></div></div></td>
+                  <td>{user.role}</td>
+                  <td><span className={`ib-admin-status ${user.role === "admin" ? "published" : "draft"}`}>{user.role === "admin" ? "Dashboard" : "Website only"}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </DataCard>
+    </>
+  );
+}
+
+const rolePermissions = [
+  { role: "Super Admin", description: "Full access to every section of the dashboard.", permissions: "Properties, Careers, Leads, Content, Users, Settings" },
+  { role: "Admin", description: "Manages listings, careers and enquiries.", permissions: "Properties, Careers, Leads, Inquiries, Content" },
+  { role: "User", description: "Standard website account with no dashboard access.", permissions: "Public website only" },
+];
+
+function RolesView() {
+  return (
+    <>
+      <PageHeader title="Roles & Permissions" subtitle="What each level of access can do." />
+      <DataCard title="Access Levels" subtitle="Roles are stored securely on your account, not in the browser.">
+        <table className="ib-admin-data-table">
+          <thead><tr><th>Role</th><th>Description</th><th>Can Access</th></tr></thead>
+          <tbody>
+            {rolePermissions.map((item) => (
+              <tr key={item.role}>
+                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Shield /></span><div><strong>{item.role}</strong><small>{item.description}</small></div></div></td>
+                <td>{item.description}</td>
+                <td>{item.permissions}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </DataCard>
+    </>
+  );
+}
+
+function SettingsView() {
+  return (
+    <>
+      <PageHeader title="Settings" subtitle="Company details shown across the public website." />
+      <div className="ib-admin-grid-main-side">
+        <section className="ib-admin-card">
+          <div className="ib-admin-card-header"><div><h3>Company Information</h3><p className="ib-admin-card-subtitle">Used in the footer and contact forms.</p></div></div>
+          <form className="ib-admin-form" onSubmit={(event) => event.preventDefault()}>
+            <div className="ib-admin-form-grid">
+              <label>Company Name<input defaultValue="IronBridge Industrial Group" /></label>
+              <label>Email<input defaultValue="info@ironbridge.co.ke" /></label>
+              <label>Phone<input defaultValue="+254 700 000 000" /></label>
+              <label>Head Office<input defaultValue="Maai Mahiu, Kenya" /></label>
+              <label>Office Hours<input defaultValue="Mon – Fri, 8:00am – 5:00pm" /></label>
+              <label>WhatsApp Number<input defaultValue="+254 700 000 000" /></label>
+            </div>
+            <label>About Summary<textarea rows={3} defaultValue="IronBridge Industrial Group develops, leases and manages Grade A industrial space across Kenya." /></label>
+            <div className="ib-admin-dialog-actions"><Button type="submit">Save Settings</Button></div>
+          </form>
+        </section>
+        <section className="ib-admin-card">
+          <div className="ib-admin-card-header"><h3>Status</h3></div>
+          <div className="ib-admin-activity-list">
+            <Activity icon={<CheckCircle2 />} title="Website live" text="Your public pages are online and reachable." />
+            <Activity icon={<Shield />} title="Admin access protected" text="Only accounts with the admin role can open this dashboard." />
+            <Activity icon={<BriefcaseBusiness />} title="Careers connected" text="Careers you add here appear on the public careers page." />
+          </div>
+        </section>
+      </div>
+    </>
+  );
+}
