@@ -28,6 +28,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
+import { properties } from "@/data/properties";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import "@/styles/admin-dashboard.css";
