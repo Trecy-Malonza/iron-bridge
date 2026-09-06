@@ -28,7 +28,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
-import { properties } from "@/data/properties";
+import { CrudView } from "@/components/admin/CrudView";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import "@/styles/admin-dashboard.css";
@@ -331,327 +331,176 @@ function DataCard({ title, subtitle, children, action }: { title: string; subtit
 
 function PropertiesView() {
   return (
-    <>
-      <PageHeader title="Properties" subtitle="Industrial space currently listed on the public website." action={<Button><Plus /> Add New Property</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Total Properties" detail="All listings" />
-        <StatTile icon={<CheckCircle2 />} tone="green" value={String(properties.length)} label="Available" detail="Visible publicly" />
-        <StatTile icon={<MapPin />} tone="purple" value="5" label="Locations" detail="Across Kenya" />
-        <StatTile icon={<BarChart3 />} tone="orange" value="47,500" label="Total SQM" detail="Portfolio size" />
-      </div>
-      <DataCard title="Property Listings" subtitle="Every industrial space shown to visitors." action={<Button variant="outline" size="sm"><Plus /> Add Property</Button>}>
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Property</th><th>Location</th><th>Size</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {properties.map((property) => (
-              <tr key={property.slug}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Building2 /></span><div><strong>{property.name}</strong><small>{property.description}</small></div></div></td>
-                <td>{property.location}</td>
-                <td>{property.size}</td>
-                <td><span className="ib-admin-status published">{property.badge}</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${property.name}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${property.name}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_properties"
+      title="Properties"
+      subtitle="Industrial space listed by IronBridge."
+      singular="Property"
+      fields={[
+        { key: "name", label: "Name", placeholder: "e.g. Grade A Warehouse" },
+        { key: "location", label: "Location", placeholder: "e.g. Maai Mahiu Industrial Area" },
+        { key: "size", label: "Size", placeholder: "e.g. 12,000 sqm" },
+        { key: "price", label: "Price", placeholder: "e.g. On request", required: false },
+        { key: "status", label: "Status", type: "select", options: ["Available", "Under Offer", "Leased", "Draft"], status: true },
+        { key: "description", label: "Description", type: "textarea", inTable: false, required: false },
+      ]}
+    />
   );
 }
 
 function CategoriesView() {
-  const categories = [
-    { name: "Grade A Warehouse", detail: "Modern high-spec warehousing with dock loading." },
-    { name: "Cold Storage", detail: "Temperature-controlled space for perishable goods." },
-    { name: "Industrial Godown", detail: "High-eaves storage with strong road access." },
-    { name: "Logistics Hub", detail: "Cross-docking and container yard facilities." },
-    { name: "Light Industrial", detail: "Flexible units for assembly and light manufacturing." },
-    { name: "Industrial Land", detail: "Serviced parcels ready for build-to-suit." },
-  ];
-  const counts = (name: string) => properties.filter((p) => p.name.toLowerCase().includes(name.split(" ")[0]!.toLowerCase())).length;
   return (
-    <>
-      <PageHeader title="Categories" subtitle="Property types used to organise the public listings." action={<Button><Plus /> Add Category</Button>} />
-      <DataCard title="Property Categories" subtitle="Each category groups listings shown on the website.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Category</th><th>Description</th><th>Listings</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {categories.map((c) => (
-              <tr key={c.name}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><ClipboardList /></span><div><strong>{c.name}</strong><small>{c.detail}</small></div></div></td>
-                <td>{c.detail}</td>
-                <td>{counts(c.name)}</td>
-                <td><span className="ib-admin-status published">Active</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${c.name}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${c.name}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_categories"
+      title="Categories"
+      subtitle="Property types used across your listings."
+      singular="Category"
+      fields={[
+        { key: "name", label: "Name", placeholder: "e.g. Cold Storage" },
+        { key: "description", label: "Description", type: "textarea", required: false },
+      ]}
+    />
   );
 }
 
 function LocationsView() {
   return (
-    <>
-      <PageHeader title="Locations" subtitle="Every town and industrial area where IronBridge has space." action={<Button><Plus /> Add Location</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<MapPin />} tone="purple" value={String(new Set(properties.map((p) => p.location)).size)} label="Locations" detail="Across Kenya" />
-        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Listings Mapped" detail="With coordinates" />
-      </div>
-      <DataCard title="Mapped Locations" subtitle="Coordinates power the map on the properties page.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Location</th><th>Property</th><th>Coordinates</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {properties.map((p) => (
-              <tr key={p.slug}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><MapPin /></span><div><strong>{p.location}</strong><small>{p.size}</small></div></div></td>
-                <td>{p.name}</td>
-                <td>{p.lat.toFixed(4)}, {p.lng.toFixed(4)}</td>
-                <td><span className="ib-admin-status published">Mapped</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${p.location}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${p.location}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_locations"
+      title="Locations"
+      subtitle="Areas where IronBridge operates, with map coordinates."
+      singular="Location"
+      fields={[
+        { key: "name", label: "Name", placeholder: "e.g. Maai Mahiu" },
+        { key: "region", label: "Region", placeholder: "e.g. Nakuru County", required: false },
+        { key: "lat", label: "Latitude", type: "number" },
+        { key: "lng", label: "Longitude", type: "number" },
+      ]}
+    />
   );
 }
 
 function AmenitiesView() {
-  const amenities = Array.from(new Set(properties.flatMap((p) => p.features)));
   return (
-    <>
-      <PageHeader title="Amenities" subtitle="Features tagged on each industrial space." action={<Button><Plus /> Add Amenity</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<Shield />} tone="teal" value={String(amenities.length)} label="Amenities" detail="In use across listings" />
-        <StatTile icon={<Building2 />} tone="blue" value={String(properties.length)} label="Listings Tagged" detail="All properties" />
-      </div>
-      <DataCard title="Amenity List" subtitle="Shown as tags on property cards and detail pages.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Amenity</th><th>Used By</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {amenities.map((a) => (
-              <tr key={a}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Shield /></span><div><strong>{a}</strong><small>Property feature tag</small></div></div></td>
-                <td>{properties.filter((p) => p.features.includes(a)).map((p) => p.name).join(", ")}</td>
-                <td><span className="ib-admin-status published">Active</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${a}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${a}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_amenities"
+      title="Amenities"
+      subtitle="Features you can attach to any listing."
+      singular="Amenity"
+      fields={[
+        { key: "name", label: "Name", placeholder: "e.g. 24/7 Security" },
+        { key: "description", label: "Description", type: "textarea", required: false },
+      ]}
+    />
   );
 }
-
-const leads = [
-  { name: "Daniel Mwangi", company: "Rift Logistics Ltd", email: "daniel@riftlogistics.co.ke", phone: "+254 712 004 118", interest: "Grade A Warehouse", status: "New" },
-  { name: "Amina Yusuf", company: "Coastline Freight", email: "amina@coastlinefreight.com", phone: "+254 733 887 221", interest: "Logistics Hub", status: "Contacted" },
-  { name: "Peter Kariuki", company: "Fresh Valley Produce", email: "peter@freshvalley.co.ke", phone: "+254 720 551 903", interest: "Cold Storage Facility", status: "Qualified" },
-  { name: "Sarah Njeri", company: "Njeri Manufacturing", email: "sarah@njerimfg.co.ke", phone: "+254 701 442 660", interest: "Light Industrial Unit", status: "Converted" },
-];
 
 function LeadsView() {
   return (
-    <>
-      <PageHeader title="Leads" subtitle="Enquiries captured from the property finder form." action={<Button><Plus /> Add Lead</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<Users />} tone="blue" value="24" label="Total Leads" detail="All time" />
-        <StatTile icon={<Bell />} tone="orange" value="8" label="New" detail="Awaiting first contact" />
-        <StatTile icon={<ClipboardList />} tone="purple" value="9" label="Qualified" detail="In discussion" />
-        <StatTile icon={<CheckCircle2 />} tone="green" value="7" label="Converted" detail="This quarter" />
-      </div>
-      <DataCard title="Recent Leads" subtitle="Follow up on the newest enquiries first.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Lead</th><th>Contact</th><th>Interested In</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {leads.map((lead) => (
-              <tr key={lead.email}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><UserRound /></span><div><strong>{lead.name}</strong><small>{lead.company}</small></div></div></td>
-                <td>{lead.email}<br /><small>{lead.phone}</small></td>
-                <td>{lead.interest}</td>
-                <td><span className={`ib-admin-status ${lead.status === "Converted" ? "published" : "draft"}`}>{lead.status}</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Email ${lead.name}`}><MessageSquare /></Button><Button variant="ghost" size="icon" aria-label={`Edit ${lead.name}`}><Pencil /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_leads"
+      title="Leads"
+      subtitle="Enquiries from people looking for industrial space."
+      singular="Lead"
+      fields={[
+        { key: "name", label: "Name" },
+        { key: "company", label: "Company", required: false },
+        { key: "email", label: "Email", type: "email", required: false },
+        { key: "phone", label: "Phone", required: false },
+        { key: "status", label: "Status", type: "select", options: ["New", "Contacted", "Qualified", "Converted", "Lost"], status: true },
+        { key: "requirement", label: "Requirement", type: "textarea", inTable: false, required: false },
+      ]}
+    />
   );
 }
-
-const inquiries = [
-  { subject: "Availability of 20,000 sqm space", from: "logistics@savannahgroup.co.ke", received: "Today, 08:12", status: "New" },
-  { subject: "Lease terms for Athi River cold store", from: "procurement@chillfresh.co.ke", received: "Yesterday, 16:40", status: "Replied" },
-  { subject: "Site visit request — Maai Mahiu", from: "ops@bluelineparcels.com", received: "2 Sep, 11:05", status: "Scheduled" },
-  { subject: "Build-to-suit enquiry", from: "info@kenpackltd.co.ke", received: "31 Aug, 09:22", status: "Replied" },
-];
 
 function InquiriesView() {
   return (
-    <>
-      <PageHeader title="Inquiries" subtitle="Messages sent through the contact and chat forms." />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<MessageSquare />} tone="blue" value="12" label="Total Inquiries" detail="This month" />
-        <StatTile icon={<Bell />} tone="orange" value="4" label="Awaiting Reply" detail="Needs attention" />
-        <StatTile icon={<CheckCircle2 />} tone="green" value="8" label="Resolved" detail="Closed out" />
-      </div>
-      <DataCard title="Inbox" subtitle="Reply within 24 hours to keep response times strong.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Subject</th><th>From</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {inquiries.map((item) => (
-              <tr key={item.subject}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><MessageSquare /></span><div><strong>{item.subject}</strong><small>{item.from}</small></div></div></td>
-                <td>{item.from}</td>
-                <td>{item.received}</td>
-                <td><span className={`ib-admin-status ${item.status === "New" ? "draft" : "published"}`}>{item.status}</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Reply to ${item.subject}`}><MessageSquare /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${item.subject}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_inquiries"
+      title="Inquiries"
+      subtitle="Messages sent through the contact and chat forms."
+      singular="Inquiry"
+      fields={[
+        { key: "sender_name", label: "From" },
+        { key: "email", label: "Email", type: "email", required: false },
+        { key: "subject", label: "Subject", required: false },
+        { key: "status", label: "Status", type: "select", options: ["Unread", "Replied", "Scheduled", "Closed"], status: true },
+        { key: "message", label: "Message", type: "textarea", inTable: false, required: false },
+      ]}
+    />
   );
 }
-
-const clients = [
-  { name: "Savannah Logistics Group", contact: "Mercy Achieng", space: "Grade A Warehouse — 12,000 sqm", since: "Jan 2024", status: "Active" },
-  { name: "ChillFresh Kenya", contact: "Victor Omondi", space: "Cold Storage Facility — 8,500 sqm", since: "Aug 2024", status: "Active" },
-  { name: "Blueline Parcels", contact: "Faith Wanjiru", space: "Logistics Hub — 18,000 sqm", since: "Mar 2025", status: "Active" },
-  { name: "KenPack Ltd", contact: "Joseph Mutua", space: "Light Industrial Unit — 3,800 sqm", since: "Nov 2023", status: "Renewal Due" },
-];
 
 function ClientsView() {
   return (
-    <>
-      <PageHeader title="Clients" subtitle="Tenants and buyers currently working with IronBridge." action={<Button><Plus /> Add Client</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<UserRound />} tone="blue" value="18" label="Total Clients" detail="Active accounts" />
-        <StatTile icon={<Building2 />} tone="purple" value="42,300" label="Leased SQM" detail="Under management" />
-        <StatTile icon={<Bell />} tone="orange" value="3" label="Renewals Due" detail="Next 90 days" />
-      </div>
-      <DataCard title="Client Accounts" subtitle="Relationship owners and occupied space.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Client</th><th>Main Contact</th><th>Space</th><th>Client Since</th><th>Status</th></tr></thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.name}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Building2 /></span><div><strong>{client.name}</strong><small>{client.space}</small></div></div></td>
-                <td>{client.contact}</td>
-                <td>{client.space}</td>
-                <td>{client.since}</td>
-                <td><span className={`ib-admin-status ${client.status === "Active" ? "published" : "draft"}`}>{client.status}</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_clients"
+      title="Clients"
+      subtitle="Tenants and buyers currently working with IronBridge."
+      singular="Client"
+      fields={[
+        { key: "company", label: "Company" },
+        { key: "contact_person", label: "Contact Person", required: false },
+        { key: "email", label: "Email", type: "email", required: false },
+        { key: "phone", label: "Phone", required: false },
+        { key: "occupied_space", label: "Occupied Space", required: false },
+        { key: "renewal_status", label: "Status", type: "select", options: ["Active", "Renewal Due", "Ended"], status: true },
+      ]}
+    />
   );
 }
 
-const posts = [
-  { title: "Why Maai Mahiu Is Kenya's Next Industrial Frontier", category: "Market Insights", author: "Brian O.", date: "2 Sep 2026", status: "Published" },
-  { title: "Cold Chain Demand Reshapes Warehouse Design", category: "Market Insights", author: "Grace W. Kariuki", date: "24 Aug 2026", status: "Published" },
-  { title: "IronBridge Opens New Logistics Hub", category: "Company News", author: "Collins K. Kimani", date: "12 Aug 2026", status: "Published" },
-  { title: "Choosing Between Leasing and Build-to-Suit", category: "Guides", author: "Brian O.", date: "—", status: "Draft" },
-];
-
 function BlogView() {
   return (
-    <>
-      <PageHeader title="Blog Posts" subtitle="Articles published on the insights page." action={<Button><Plus /> New Post</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<FileText />} tone="blue" value="4" label="Total Posts" detail="All articles" />
-        <StatTile icon={<CheckCircle2 />} tone="green" value="3" label="Published" detail="Live on site" />
-        <StatTile icon={<Pencil />} tone="orange" value="1" label="Drafts" detail="Work in progress" />
-      </div>
-      <DataCard title="Articles" subtitle="Write, edit and publish industrial market insights." action={<Button variant="outline" size="sm"><Plus /> New Post</Button>}>
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {posts.map((post) => (
-              <tr key={post.title}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><FileText /></span><div><strong>{post.title}</strong><small>{post.category}</small></div></div></td>
-                <td>{post.category}</td>
-                <td>{post.author}</td>
-                <td>{post.date}</td>
-                <td><span className={`ib-admin-status ${post.status.toLowerCase()}`}>{post.status}</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${post.title}`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${post.title}`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_blog_posts"
+      title="Blog Posts"
+      subtitle="Articles shown on the insights page."
+      singular="Post"
+      fields={[
+        { key: "title", label: "Title" },
+        { key: "category", label: "Category", type: "select", options: ["Market Insights", "Company News", "Guides", "Development"] },
+        { key: "author", label: "Author", required: false },
+        { key: "status", label: "Status", type: "select", options: ["Published", "Draft"], status: true },
+        { key: "excerpt", label: "Excerpt", type: "textarea", inTable: false, required: false },
+      ]}
+    />
   );
 }
 
 function MediaView() {
   return (
-    <>
-      <PageHeader title="Media Library" subtitle="Photography and illustrations used across the website." action={<Button><Plus /> Upload Media</Button>} />
-      <div className="ib-admin-stat-grid">
-        <StatTile icon={<Image />} tone="blue" value={String(properties.length + 6)} label="Total Files" detail="Images in use" />
-        <StatTile icon={<Building2 />} tone="purple" value={String(properties.length)} label="Property Images" detail="Listing photos" />
-        <StatTile icon={<UserRound />} tone="teal" value="3" label="Team Photos" detail="Leadership portraits" />
-      </div>
-      <DataCard title="Files" subtitle="Every asset referenced by the public pages.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>File</th><th>Used On</th><th>Type</th><th>Actions</th></tr></thead>
-          <tbody>
-            {properties.map((property) => (
-              <tr key={property.slug}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><Image /></span><div><strong>{property.name} image</strong><small>{property.location}</small></div></div></td>
-                <td>Properties</td>
-                <td>Image</td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Replace ${property.name} image`}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${property.name} image`}><Trash2 /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_media"
+      title="Media Library"
+      subtitle="Photography and illustrations used across the website."
+      singular="Media Item"
+      fields={[
+        { key: "title", label: "Title" },
+        { key: "url", label: "Link", placeholder: "https://…" },
+        { key: "media_type", label: "Type", type: "select", options: ["Image", "Illustration", "Video", "Document"] },
+      ]}
+    />
   );
 }
-
-const pages = [
-  { name: "Home", path: "/", status: "Published" },
-  { name: "Properties", path: "/properties", status: "Published" },
-  { name: "Careers", path: "/careers", status: "Published" },
-  { name: "Blog & Insights", path: "/blog", status: "Published" },
-  { name: "Chat Assistant", path: "/chat", status: "Published" },
-];
 
 function PagesView() {
   return (
-    <>
-      <PageHeader title="Pages" subtitle="Public pages available on the website." action={<Button><Plus /> Add Page</Button>} />
-      <DataCard title="Site Pages" subtitle="Everything a visitor can reach.">
-        <table className="ib-admin-data-table">
-          <thead><tr><th>Page</th><th>Address</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {pages.map((page) => (
-              <tr key={page.path}>
-                <td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><FileText /></span><div><strong>{page.name}</strong><small>{page.path}</small></div></div></td>
-                <td>{page.path}</td>
-                <td><span className="ib-admin-status published">{page.status}</span></td>
-                <td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${page.name}`}><Pencil /></Button></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DataCard>
-    </>
+    <CrudView
+      table="admin_pages"
+      title="Pages"
+      subtitle="Public pages available on the website."
+      singular="Page"
+      fields={[
+        { key: "title", label: "Title" },
+        { key: "path", label: "Path", placeholder: "/properties" },
+        { key: "status", label: "Status", type: "select", options: ["Published", "Draft"], status: true },
+      ]}
+    />
   );
 }
+
 
 function UsersView() {
   const [users, setUsers] = useState<{ user_id: string; role: string }[]>([]);
@@ -721,24 +570,64 @@ function RolesView() {
 }
 
 function SettingsView() {
+  const [form, setForm] = useState({ id: "", company_name: "", email: "", phone: "", address: "", summary: "" });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase.from("admin_settings").select("*").limit(1).maybeSingle();
+      if (data) {
+        setForm({
+          id: data.id,
+          company_name: data.company_name,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          summary: data.summary,
+        });
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  async function save(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    const payload = {
+      company_name: form.company_name,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      summary: form.summary,
+    };
+    const { error } = form.id
+      ? await supabase.from("admin_settings").update(payload).eq("id", form.id)
+      : await supabase.from("admin_settings").insert(payload);
+    setSaving(false);
+    setMessage(error ? error.message : "Settings saved.");
+  }
+
   return (
     <>
       <PageHeader title="Settings" subtitle="Company details shown across the public website." />
+      {message && <div className="ib-admin-notice" role="status">{message}</div>}
       <div className="ib-admin-grid-main-side">
         <section className="ib-admin-card">
           <div className="ib-admin-card-header"><div><h3>Company Information</h3><p className="ib-admin-card-subtitle">Used in the footer and contact forms.</p></div></div>
-          <form className="ib-admin-form" onSubmit={(event) => event.preventDefault()}>
-            <div className="ib-admin-form-grid">
-              <label>Company Name<input defaultValue="IronBridge Industrial Group" /></label>
-              <label>Email<input defaultValue="info@ironbridge.co.ke" /></label>
-              <label>Phone<input defaultValue="+254 700 000 000" /></label>
-              <label>Head Office<input defaultValue="Maai Mahiu, Kenya" /></label>
-              <label>Office Hours<input defaultValue="Mon – Fri, 8:00am – 5:00pm" /></label>
-              <label>WhatsApp Number<input defaultValue="+254 700 000 000" /></label>
-            </div>
-            <label>About Summary<textarea rows={3} defaultValue="IronBridge Industrial Group develops, leases and manages Grade A industrial space across Kenya." /></label>
-            <div className="ib-admin-dialog-actions"><Button type="submit">Save Settings</Button></div>
-          </form>
+          {loading ? <div className="ib-admin-empty">Loading settings…</div> : (
+            <form className="ib-admin-form" onSubmit={save}>
+              <div className="ib-admin-form-grid">
+                <label>Company Name<input required value={form.company_name} onChange={(event) => setForm({ ...form, company_name: event.target.value })} /></label>
+                <label>Email<input required type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></label>
+                <label>Phone<input required value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} /></label>
+                <label>Head Office<input required value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} /></label>
+              </div>
+              <label>About Summary<textarea rows={3} value={form.summary} onChange={(event) => setForm({ ...form, summary: event.target.value })} /></label>
+              <div className="ib-admin-dialog-actions"><Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save Settings"}</Button></div>
+            </form>
+          )}
         </section>
         <section className="ib-admin-card">
           <div className="ib-admin-card-header"><h3>Status</h3></div>
