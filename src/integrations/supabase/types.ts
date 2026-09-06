@@ -14,6 +14,345 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_amenities: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_blog_posts: {
+        Row: {
+          author: string
+          category: string
+          created_at: string
+          excerpt: string
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_categories: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_clients: {
+        Row: {
+          company: string
+          contact_person: string
+          created_at: string
+          email: string
+          id: string
+          occupied_space: string
+          phone: string
+          renewal_status: string
+          updated_at: string
+        }
+        Insert: {
+          company: string
+          contact_person?: string
+          created_at?: string
+          email?: string
+          id?: string
+          occupied_space?: string
+          phone?: string
+          renewal_status?: string
+          updated_at?: string
+        }
+        Update: {
+          company?: string
+          contact_person?: string
+          created_at?: string
+          email?: string
+          id?: string
+          occupied_space?: string
+          phone?: string
+          renewal_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          sender_name: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          sender_name: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          sender_name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_leads: {
+        Row: {
+          company: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string
+          requirement: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name: string
+          phone?: string
+          requirement?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          requirement?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_locations: {
+        Row: {
+          created_at: string
+          id: string
+          lat: number
+          lng: number
+          name: string
+          region: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name: string
+          region?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+          region?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_media: {
+        Row: {
+          created_at: string
+          id: string
+          media_type: string
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          media_type?: string
+          title: string
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          media_type?: string
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      admin_pages: {
+        Row: {
+          created_at: string
+          id: string
+          path: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_properties: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          location: string
+          name: string
+          price: string
+          size: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          name: string
+          price?: string
+          size?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          name?: string
+          price?: string
+          size?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_settings: {
+        Row: {
+          address: string
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          phone: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       careers: {
         Row: {
           created_at: string
