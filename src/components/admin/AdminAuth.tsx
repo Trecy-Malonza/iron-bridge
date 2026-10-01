@@ -60,14 +60,24 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); sessionStorage.removeItem(FLAG); }
     } else {
-      sessionStorage.setItem(FLAG, "pending");
+      sessionStorage.removeItem(FLAG);
       const { data, error: err } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name } },
       });
       if (err) setError(err.message);
-      else if (!data.session) setNotice("Account created. Check your email to confirm, then log in.");
+      else {
+        // Always send new accounts to the Log In tab to sign in with email and password.
+        if (data.session) await supabase.auth.signOut();
+        setMode("login");
+        setPassword("");
+        setNotice(
+          data.session
+            ? "Account created. Please log in with your email and password."
+            : "Account created. Confirm your email, then log in with your email and password.",
+        );
+      }
     }
     setBusy(false);
   }
