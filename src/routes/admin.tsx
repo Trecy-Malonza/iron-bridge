@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   BarChart3,
   Bell,
@@ -32,22 +32,14 @@ import { CrudView } from "@/components/admin/CrudView";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import "@/styles/admin-dashboard.css";
+import { AdminAuth } from "@/components/admin/AdminAuth";
+
+function AdminGate() {
+  return <AdminAuth>{() => <AdminDashboard />}</AdminAuth>;
+}
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/login" });
-
-    const { data: role } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", data.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-
-    if (!role) throw redirect({ to: "/" });
-  },
   head: () => ({
     meta: [
       { title: "Admin Dashboard | IronBridge Industrial Group" },
@@ -65,7 +57,7 @@ export const Route = createFileRoute("/admin")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: AdminDashboard,
+  component: AdminGate,
 });
 
 type Career = Tables<"careers">;
@@ -168,7 +160,7 @@ function AdminDashboard() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    await navigate({ to: "/login", replace: true });
+    await navigate({ to: "/admin", replace: true });
   }
 
   const publishedCareers = useMemo(() => careers.filter((career) => career.status === "Published").length, [careers]);
