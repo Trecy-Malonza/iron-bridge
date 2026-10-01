@@ -160,7 +160,7 @@ function AdminDashboard() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    await navigate({ to: "/login", replace: true });
+    await navigate({ to: "/admin", replace: true });
   }
 
   const publishedCareers = useMemo(() => careers.filter((career) => career.status === "Published").length, [careers]);
