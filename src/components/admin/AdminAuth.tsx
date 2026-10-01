@@ -6,6 +6,8 @@ import { Logo } from "@/components/site/Logo";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
+const FLAG = "ib-admin-verified";
+
 type Status = "loading" | "signed-out" | "no-access" | "admin";
 
 export function AdminAuth({ children }: { children: () => ReactNode }) {
@@ -29,7 +31,15 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       .eq("user_id", data.user.id)
       .eq("role", "admin")
       .maybeSingle();
-    setStatus(role ? "admin" : "no-access");
+    if (!role) return setStatus("no-access");
+    // Require a fresh sign-in on this dashboard for every browser session.
+    const verified = sessionStorage.getItem(FLAG) === data.user.id || sessionStorage.getItem(FLAG) === "pending";
+    if (!verified) {
+      await supabase.auth.signOut();
+      return setStatus("signed-out");
+    }
+    sessionStorage.setItem(FLAG, data.user.id);
+    setStatus("admin");
   }
 
   useEffect(() => {
@@ -46,9 +56,11 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
     setNotice(null);
     setBusy(true);
     if (mode === "login") {
+      sessionStorage.setItem(FLAG, "pending");
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-      if (err) setError(err.message);
+      if (err) { setError(err.message); sessionStorage.removeItem(FLAG); }
     } else {
+      sessionStorage.setItem(FLAG, "pending");
       const { data, error: err } = await supabase.auth.signUp({
         email,
         password,
@@ -63,6 +75,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
   async function google() {
     setError(null);
     setBusy(true);
+    sessionStorage.setItem(FLAG, "pending");
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/admin` });
     if (result.error) {
       setBusy(false);
