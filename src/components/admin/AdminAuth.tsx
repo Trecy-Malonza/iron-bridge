@@ -23,7 +23,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
 
   async function check() {
     const { data } = await supabase.auth.getUser();
-    if (!data.user) return setStatus("signed-out");
+    if (!data.user) { sessionStorage.removeItem(FLAG); return setStatus("signed-out"); }
     setUserEmail(data.user.email ?? "");
     const { data: role } = await supabase
       .from("user_roles")

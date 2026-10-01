@@ -159,6 +159,7 @@ function AdminDashboard() {
   }
 
   async function signOut() {
+    sessionStorage.removeItem("ib-admin-verified");
     await supabase.auth.signOut();
     await navigate({ to: "/admin", replace: true });
   }
