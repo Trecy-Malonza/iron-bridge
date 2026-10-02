@@ -25,8 +25,8 @@ export const Route = createFileRoute("/login")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>) => ({
-    email: typeof search.email === "string" ? search.email : undefined,
+  validateSearch: (search: Record<string, unknown>): { email?: string } => ({
+    email: typeof search["email"] === "string" ? search["email"] : undefined,
   }),
   component: LoginPage,
 });
