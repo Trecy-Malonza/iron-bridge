@@ -25,12 +25,16 @@ export const Route = createFileRoute("/login")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { email?: string | undefined } => ({
+    email: typeof search["email"] === "string" ? search["email"] : undefined,
+  }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const [show, setShow] = useState(false);
-  const [email, setEmail] = useState("");
+  const search = Route.useSearch();
+  const [email, setEmail] = useState(search.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

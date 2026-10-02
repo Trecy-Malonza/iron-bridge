@@ -158,6 +158,20 @@ function AdminDashboard() {
     await loadCareers();
   }
 
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profileName, setProfileName] = useState("Admin");
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user;
+      if (!u) return;
+      const mail = u.email ?? "";
+      setProfileEmail(mail);
+      const meta = u.user_metadata as { full_name?: string; name?: string } | undefined;
+      setProfileName(meta?.full_name || meta?.name || mail.split("@")[0] || "Admin");
+    });
+  }, []);
+  const initials = profileName.split(/[\s._-]+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("") || "A";
+
   async function signOut() {
     sessionStorage.removeItem("ib-admin-verified");
     await supabase.auth.signOut();
@@ -220,8 +234,8 @@ function AdminDashboard() {
             <Button variant="ghost" size="icon" aria-label="Notifications" className="ib-admin-icon-button"><Bell /><span className="ib-admin-badge">3</span></Button>
             <Button variant="ghost" size="icon" aria-label="Messages" className="ib-admin-icon-button"><MessageSquare /><span className="ib-admin-badge">7</span></Button>
             <Button variant="ghost" className="ib-admin-user-menu" onClick={signOut} title="Sign out">
-              <span className="ib-admin-avatar">JA</span>
-              <span className="ib-admin-user-meta"><strong>John Admin</strong><small>Super Admin</small></span>
+              <span className="ib-admin-avatar">{initials}</span>
+              <span className="ib-admin-user-meta"><strong>{profileName}</strong><small>{profileEmail}</small></span>
               <ChevronDown />
             </Button>
           </div>

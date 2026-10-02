@@ -65,11 +65,8 @@ function SignupPage() {
       setError(signUpError.message);
       return;
     }
-    if (!data.session) {
-      setNotice("Check your email to confirm your account, then log in.");
-      return;
-    }
-    navigate({ to: "/", hash: "find-space" });
+    if (data.session) await supabase.auth.signOut();
+    navigate({ to: "/login", search: { email: values["email"] ?? "" } });
   }
 
   async function handleGoogle() {
