@@ -7,6 +7,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
 const FLAG = "ib-admin-verified";
+const NEW = "ib-admin-new-account";
 
 type Status = "loading" | "signed-out" | "no-access" | "admin";
 
@@ -24,9 +25,13 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
   const signingUp = useRef(false);
 
   async function check() {
-    if (signingUp.current) return;
     const { data } = await supabase.auth.getUser();
     if (!data.user) { sessionStorage.removeItem(FLAG); return setStatus("signed-out"); }
+    // Fresh sign-ups are sent to the Log In tab instead of being kept signed in.
+    if (signingUp.current || sessionStorage.getItem(NEW) === data.user.email) {
+      await supabase.auth.signOut();
+      return setStatus("signed-out");
+    }
     setUserEmail(data.user.email ?? "");
     const { data: role } = await supabase
       .from("user_roles")
@@ -60,18 +65,20 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
     setBusy(true);
     if (mode === "login") {
       sessionStorage.setItem(FLAG, "pending");
+      sessionStorage.removeItem(NEW);
+      signingUp.current = false;
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); sessionStorage.removeItem(FLAG); }
     } else {
       sessionStorage.removeItem(FLAG);
       signingUp.current = true;
+      sessionStorage.setItem(NEW, email);
       const { data, error: err } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name } },
       });
-      signingUp.current = err ? false : true;
-      if (err) setError(err.message);
+      if (err) { setError(err.message); signingUp.current = false; sessionStorage.removeItem(NEW); }
       else {
         // Always send new accounts to the Log In tab to sign in with email and password.
         if (data.session) await supabase.auth.signOut();
@@ -79,7 +86,6 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
         setMode("login");
         setPassword("");
         setNotice("Please log in with your email and password.");
-        signingUp.current = false;
       }
     }
     setBusy(false);
