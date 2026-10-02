@@ -72,11 +72,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
         if (data.session) await supabase.auth.signOut();
         setMode("login");
         setPassword("");
-        setNotice(
-          data.session
-            ? "Account created. Please log in with your email and password."
-            : "Account created. Confirm your email, then log in with your email and password.",
-        );
+        setNotice("Please log in with your email and password.");
       }
     }
     setBusy(false);
