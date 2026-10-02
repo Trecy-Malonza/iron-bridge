@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Lock, Mail, ShieldCheck, UserRound } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Logo } from "@/components/site/Logo";
 import { lovable } from "@/integrations/lovable/index";
@@ -21,7 +21,10 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
+  const signingUp = useRef(false);
+
   async function check() {
+    if (signingUp.current) return;
     const { data } = await supabase.auth.getUser();
     if (!data.user) { sessionStorage.removeItem(FLAG); return setStatus("signed-out"); }
     setUserEmail(data.user.email ?? "");
@@ -61,18 +64,22 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       if (err) { setError(err.message); sessionStorage.removeItem(FLAG); }
     } else {
       sessionStorage.removeItem(FLAG);
+      signingUp.current = true;
       const { data, error: err } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name } },
       });
+      signingUp.current = err ? false : true;
       if (err) setError(err.message);
       else {
         // Always send new accounts to the Log In tab to sign in with email and password.
         if (data.session) await supabase.auth.signOut();
+        setStatus("signed-out");
         setMode("login");
         setPassword("");
         setNotice("Please log in with your email and password.");
+        signingUp.current = false;
       }
     }
     setBusy(false);
