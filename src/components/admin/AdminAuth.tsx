@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Lock, Mail, ShieldCheck, UserRound } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Logo } from "@/components/site/Logo";
-import { lovable } from "@/integrations/lovable/index";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const FLAG = "ib-admin-verified";
@@ -17,6 +17,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -62,6 +63,10 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
     e.preventDefault();
     setError(null);
     setNotice(null);
+    if (mode === "signup" && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     setBusy(true);
     if (mode === "login") {
       sessionStorage.setItem(FLAG, "pending");
@@ -85,29 +90,19 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
         setStatus("signed-out");
         setMode("login");
         setPassword("");
+        setConfirmPassword("");
         setNotice("Please log in with your email and password.");
       }
     }
     setBusy(false);
   }
 
-  async function google() {
-    setError(null);
-    setBusy(true);
-    sessionStorage.setItem(FLAG, "pending");
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/admin` });
-    if (result.error) {
-      setBusy(false);
-      setError("Google sign-in failed. Please try again.");
-    }
-  }
-
   if (status === "admin") return <>{children()}</>;
 
   const shell = (body: ReactNode) => (
-    <main className="flex min-h-screen items-center justify-center bg-navy-deep px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl bg-card p-8 shadow-float sm:p-10">
-        <Link to="/" className="flex justify-center">
+    <main className="flex min-h-screen items-center justify-center bg-navy-deep px-2 py-4 sm:px-4 sm:py-8">
+      <div className="w-full max-w-[368px] rounded-[14px] bg-card px-7 py-8 shadow-float sm:px-8">
+        <Link to="/" className="inline-flex" aria-label="Go to home page">
           <Logo />
         </Link>
         {body}
@@ -134,60 +129,65 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       </div>,
     );
 
-  const field = "mt-2 flex items-center rounded-md border border-input px-3 focus-within:border-primary";
-  const input = "w-full bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground";
+  const input = "mt-1.5 h-10 w-full rounded-md border border-input bg-surface px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary";
+
+  function switchMode(nextMode: "login" | "signup") {
+    setMode(nextMode);
+    setError(null);
+    setNotice(null);
+    setPassword("");
+    setConfirmPassword("");
+  }
 
   return shell(
     <>
-      <h1 className="mt-6 text-center text-2xl font-bold text-navy">Admin Dashboard</h1>
-      <p className="mt-1 text-center text-sm text-muted-foreground">
-        {mode === "login" ? "Log in to manage IronBridge" : "Create an admin account"}
+      <h1 className="mt-7 text-xl font-bold text-foreground">
+        {mode === "login" ? "Admin Sign In" : "Create Admin Account"}
+      </h1>
+      <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+        {mode === "login" ? "Access the property management dashboard." : "Set up access to the property management dashboard."}
       </p>
-      <div className="mt-6 grid grid-cols-2 rounded-md bg-muted p-1 text-sm font-medium">
-        {(["login", "signup"] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => { setMode(m); setError(null); setNotice(null); }}
-            className={`rounded py-2 ${mode === m ? "bg-card text-navy shadow-sm" : "text-muted-foreground"}`}
-          >
-            {m === "login" ? "Log In" : "Sign Up"}
-          </button>
-        ))}
-      </div>
-      <form className="mt-6 space-y-4" onSubmit={submit}>
+      <form className="mt-5 space-y-3.5" onSubmit={submit}>
         {mode === "signup" && (
           <div>
-            <label htmlFor="admin-name" className="text-sm font-medium text-navy">Full Name</label>
-            <div className={field}>
-              <UserRound className="h-4 w-4 text-muted-foreground" />
-              <input id="admin-name" required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={input} />
-            </div>
+            <label htmlFor="admin-name" className="text-xs font-semibold text-foreground">Full Name</label>
+            <input id="admin-name" required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Wanjiku" className={input} />
           </div>
         )}
         <div>
-          <label htmlFor="admin-email" className="text-sm font-medium text-navy">Email Address</label>
-          <div className={field}>
-            <Mail className="h-4 w-4 text-muted-foreground" />
-            <input id="admin-email" type="email" required maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={input} />
-          </div>
+          <label htmlFor="admin-email" className="text-xs font-semibold text-foreground">Email</label>
+          <input id="admin-email" type="email" required maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@ironbridge.co.ke" className={input} />
         </div>
+        {mode === "signup" && (
+          <div>
+            <label htmlFor="admin-role" className="text-xs font-semibold text-foreground">Role</label>
+            <select id="admin-role" value="Super Admin" disabled className={`${input} appearance-auto bg-card text-foreground disabled:cursor-not-allowed disabled:opacity-100`}>
+              <option>Super Admin</option>
+            </select>
+          </div>
+        )}
         <div>
-          <label htmlFor="admin-password" className="text-sm font-medium text-navy">Password</label>
-          <div className={field}>
-            <Lock className="h-4 w-4 text-muted-foreground" />
-            <input id="admin-password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" className={input} />
-          </div>
+          <label htmlFor="admin-password" className="text-xs font-semibold text-foreground">Password</label>
+          <input id="admin-password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === "login" ? "Your password" : "At least 6 characters"} className={input} />
         </div>
+        {mode === "signup" && (
+          <div>
+            <label htmlFor="admin-confirm-password" className="text-xs font-semibold text-foreground">Confirm Password</label>
+            <input id="admin-confirm-password" type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat password" className={input} />
+          </div>
+        )}
         {error && <p className="text-sm text-destructive">{error}</p>}
-        {notice && <p className="text-sm text-primary">{notice}</p>}
-        <button type="submit" disabled={busy} className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
-          {busy ? "Please wait…" : mode === "login" ? "Log In" : "Sign Up"}
-        </button>
-        <button type="button" onClick={google} disabled={busy} className="flex w-full items-center justify-center gap-3 rounded-md border border-input py-3 text-sm font-medium hover:bg-accent disabled:opacity-60">
-          <span className="font-bold text-primary">G</span> Continue with Google
-        </button>
+        {notice && <p className="text-xs text-primary">{notice}</p>}
+        <Button type="submit" disabled={busy} className="h-10 w-full text-xs font-semibold">
+          {busy ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+        </Button>
       </form>
+      <p className="mt-2.5 text-center text-[10px] text-muted-foreground">
+        {mode === "login" ? "No account yet? " : "Already have an account? "}
+        <button type="button" onClick={() => switchMode(mode === "login" ? "signup" : "login")} className="font-semibold text-primary hover:underline">
+          {mode === "login" ? "Create an account" : "Sign in"}
+        </button>
+      </p>
     </>,
   );
 }
