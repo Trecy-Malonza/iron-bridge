@@ -180,7 +180,15 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
             <input id="admin-confirm-password" type="password" required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat password" className={input} />
           </div>
         )}
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {mode === "login" && (
+          <button type="button" className="text-[11px] font-semibold text-primary hover:underline" onClick={async () => {
+            setError(null);
+            if (!email) { setError("Enter your email first, then click Forgot password."); return; }
+            const { error: err } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+            if (err) setError(err.message); else setNotice("A password reset link has been sent to your email.");
+          }}>Forgot password?</button>
+        )}
+        {error && <p className="text-sm text-destructive">{error === "Invalid login credentials" ? "Incorrect password for this email. Use “Forgot password?” to reset it." : error}</p>}
         {notice && <p className="text-xs text-primary">{notice}</p>}
         <Button type="submit" disabled={busy} className="h-10 w-full text-xs font-semibold">
           {busy ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
