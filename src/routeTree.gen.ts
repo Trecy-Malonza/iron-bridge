@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
@@ -44,6 +45,11 @@ const ChatRoute = ChatRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/chat': typeof ApiChatRoute
   '/careers/property-manager': typeof CareersPropertyManagerRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/chat'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/api/chat'
     | '/careers/property-manager'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/chat'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/api/chat'
     | '/careers/property-manager'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/chat'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/api/chat'
     | '/careers/property-manager'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   ChatRoute: typeof ChatRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   ApiChatRoute: typeof ApiChatRoute
   CareersPropertyManagerRoute: typeof CareersPropertyManagerRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   ChatRoute: ChatRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   ApiChatRoute: ApiChatRoute,
   CareersPropertyManagerRoute: CareersPropertyManagerRoute,
