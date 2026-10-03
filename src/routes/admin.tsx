@@ -226,13 +226,7 @@ function AdminDashboard() {
             <div className="ib-admin-breadcrumb">Dashboard {view !== "dashboard" && <><span>›</span> <strong>{view[0]?.toUpperCase() + view.slice(1)}</strong></>}</div>
           </div>
           <div className="ib-admin-topbar-right">
-            <label className="ib-admin-search-box">
-              <Search />
-              <input type="search" placeholder="Search anything..." aria-label="Search anything" />
-              <kbd>⌘K</kbd>
-            </label>
-            <Button variant="ghost" size="icon" aria-label="Notifications" className="ib-admin-icon-button"><Bell /><span className="ib-admin-badge">3</span></Button>
-            <Button variant="ghost" size="icon" aria-label="Messages" className="ib-admin-icon-button"><MessageSquare /><span className="ib-admin-badge">7</span></Button>
+            <TopbarTools onSelect={(v) => selectView(v as View)} />
             <Button variant="ghost" className="ib-admin-user-menu" onClick={signOut} title="Sign out">
               <span className="ib-admin-avatar">{initials}</span>
               <span className="ib-admin-user-meta"><strong>{profileName}</strong><small>{profileEmail}</small></span>
