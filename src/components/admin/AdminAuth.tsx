@@ -18,6 +18,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [jobRole, setJobRole] = useState("Super Admin");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -81,7 +82,7 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       const { data, error: err } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name } },
+        options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name, job_role: jobRole } },
       });
       if (err) { setError(err.message); signingUp.current = false; sessionStorage.removeItem(NEW); }
       else {
@@ -161,8 +162,11 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
         {mode === "signup" && (
           <div>
             <label htmlFor="admin-role" className="text-xs font-semibold text-foreground">Role</label>
-            <select id="admin-role" value="Super Admin" disabled className={`${input} appearance-auto bg-card text-foreground disabled:cursor-not-allowed disabled:opacity-100`}>
+            <select id="admin-role" value={jobRole} onChange={(e) => setJobRole(e.target.value)} className={`${input} appearance-auto bg-card text-foreground`}>
               <option>Super Admin</option>
+              <option>Sales Manager</option>
+              <option>Operator</option>
+              <option>Content Creator</option>
             </select>
           </div>
         )}
