@@ -25,10 +25,10 @@ import {
 } from "lucide-react";
 
 
-import servicesBg from "@/assets/services-bg.jpg.asset.json";
+import servicesBg from "@/assets/services-bg.jpg";
 import handshake from "@/assets/handshake.jpg";
 import heroPark from "@/assets/hero-industrial-park.jpg";
-import teamBrian from "@/assets/team-brian-new.png.asset.json";
+import teamBrian from "@/assets/team-brian-new.png";
 import teamCollins from "@/assets/team-collins.png";
 import teamGrace from "@/assets/team-grace.png";
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
@@ -106,7 +106,7 @@ const pillars = [
 const team = [
   { name: "Grace W. Kariuki", role: "Head of Client Relations", image: teamGrace, scale: "h-72" },
   { name: "Collins K. Kimani", role: "Founder & Chief Executive Officer", image: teamCollins, scale: "h-96" },
-  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian.url, scale: "h-72" },
+  { name: "Brian O.", role: "Chief Operating Officer", image: teamBrian, scale: "h-72" },
 ];
 
 function Index() {
@@ -305,7 +305,7 @@ function Index() {
       {/* Services */}
       <section id="services" className="relative scroll-mt-24 overflow-hidden py-20 lg:py-28">
         <img
-          src={servicesBg.url}
+          src={servicesBg}
           alt="IronBridge Business Park glass office building"
           width={1920}
           height={1088}
