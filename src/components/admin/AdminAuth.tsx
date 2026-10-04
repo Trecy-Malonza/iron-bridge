@@ -68,6 +68,10 @@ export function AdminAuth({ children }: { children: () => ReactNode }) {
       setError("Passwords do not match.");
       return;
     }
+    if (email.trim().toLowerCase() !== "admin@ironbridge.co.ke" || password !== "admin@ironbridge1") {
+      setError("Only the authorized IronBridge admin email and password can be used.");
+      return;
+    }
     setBusy(true);
     if (mode === "login") {
       sessionStorage.setItem(FLAG, "pending");
