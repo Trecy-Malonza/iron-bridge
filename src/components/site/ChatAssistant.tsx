@@ -1,7 +1,7 @@
 import { MessageCircle, X } from "lucide-react";
 import { useState } from "react";
 
-import qrAsset from "@/assets/wechat-qr.jpeg.asset.json";
+import qrAsset from "@/assets/wechat-qr.jpeg";
 
 export function ChatAssistant() {
   const [open, setOpen] = useState(false);
@@ -28,7 +28,7 @@ export function ChatAssistant() {
               <X className="h-4 w-4" />
             </button>
             <img
-              src={qrAsset.url}
+              src={qrAsset}
               alt="IronBridge Industrial Group WeChat QR code"
               width={888}
               height={1200}

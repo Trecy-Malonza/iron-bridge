@@ -1,9 +1,9 @@
-import logoAsset from "@/assets/ironbridge-logo.png.asset.json";
+import logoAsset from "@/assets/ironbridge-logo.png";
 
 export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
   return (
     <img
-      src={logoAsset.url}
+      src={logoAsset}
       alt="IronBridge Industrial Group logo"
       width={1129}
       height={186}
