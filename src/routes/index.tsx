@@ -39,7 +39,7 @@ import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 import { PropertyCarousel } from "@/components/site/PropertyCarousel";
 import { PropertyMap } from "@/components/site/PropertyMap";
-import { properties } from "@/data/properties";
+import { useProperties } from "@/lib/site-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -110,6 +110,7 @@ const team = [
 ];
 
 function Index() {
+  const properties = useProperties();
 
   return (
     <div className="min-h-screen bg-background">

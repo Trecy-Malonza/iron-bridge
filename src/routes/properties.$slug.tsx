@@ -17,10 +17,11 @@ import { useState } from "react";
 import warehouseInterior from "@/assets/warehouse-interior.jpg";
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
-import { properties } from "@/data/properties";
+import { fetchProperties, useProperties } from "@/lib/site-data";
 
 export const Route = createFileRoute("/properties/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
+    const properties = await fetchProperties();
     const property = properties.find((p) => p.slug === params.slug);
     if (!property) throw notFound();
     return { property };
@@ -62,6 +63,7 @@ const advantages = [
 ];
 
 function PropertyPage() {
+  const properties = useProperties();
   const { property } = Route.useLoaderData();
   const gallery = [property.image, warehouseInterior, warehouseInterior, property.image];
   const [index, setIndex] = useState(0);
