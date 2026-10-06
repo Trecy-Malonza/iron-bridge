@@ -161,7 +161,7 @@ function CareersIndex() {
     const icons = [Building2, ShieldCheck, DollarSign, TrendingUp, Handshake, Users];
     return rows.map((r, i) => ({
       title: r.title,
-      Icon: icons[i % icons.length],
+      Icon: icons[i % icons.length] ?? Building2,
       dept: r.department,
       deptValue: slugify(r.department),
       location: r.location,
