@@ -79,7 +79,7 @@ type Job = {
   detail?: boolean;
 };
 
-const jobs: Job[] = [
+const fallbackJobs: Job[] = [
   {
     title: "Property Manager",
     Icon: Building2,
@@ -149,29 +149,33 @@ const jobs: Job[] = [
   },
 ];
 
-const departments = [
-  { label: "All Departments", value: "all" },
-  { label: "Property Management", value: "property" },
-  { label: "Operations", value: "operations" },
-  { label: "Finance", value: "finance" },
-  { label: "Business Development", value: "bd" },
-  { label: "Client Relations", value: "client" },
-  { label: "HSE", value: "hse" },
-];
-
-const locations = [
-  { label: "All Locations", value: "all" },
-  { label: "Maai Mahiu", value: "maai-mahiu" },
-  { label: "Nairobi", value: "nairobi" },
-];
 
 function CareersIndex() {
   const [dept, setDept] = useState("all");
   const [loc, setLoc] = useState("all");
 
+  const { data: rows } = useCareers();
+  const jobs: Job[] = useMemo(() => {
+    if (!rows) return fallbackJobs;
+    const icons = [Building2, ShieldCheck, DollarSign, TrendingUp, Handshake, Users];
+    return rows.map((r, i) => ({
+      title: r.title,
+      Icon: icons[i % icons.length],
+      dept: r.department,
+      deptValue: slugify(r.department),
+      location: r.location,
+      locValue: slugify(r.location),
+      desc: r.summary || r.description,
+      type: r.employment_type,
+      exp: r.experience,
+      detail: r.title.toLowerCase() === "property manager",
+    }));
+  }, [rows]);
+  const departments = useMemo(() => [{ label: "All Departments", value: "all" }, ...Array.from(new Map(jobs.map((j) => [j.deptValue, j.dept]))).map(([value, label]) => ({ label, value }))], [jobs]);
+  const locations = useMemo(() => [{ label: "All Locations", value: "all" }, ...Array.from(new Map(jobs.map((j) => [j.locValue, j.location]))).map(([value, label]) => ({ label, value }))], [jobs]);
   const visible = useMemo(
     () => jobs.filter((j) => (dept === "all" || j.deptValue === dept) && (loc === "all" || j.locValue === loc)),
-    [dept, loc],
+    [dept, loc, jobs],
   );
 
   return (

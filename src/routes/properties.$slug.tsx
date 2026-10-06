@@ -40,6 +40,8 @@ export const Route = createFileRoute("/properties/$slug")({
     };
   },
   component: PropertyPage,
+  notFoundComponent: () => <div className="p-10 text-center">Property not found. <Link to="/properties" className="text-primary">View all properties</Link></div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">{error.message}</div>,
 });
 
 const highlights = [
