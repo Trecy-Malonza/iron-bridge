@@ -4,7 +4,7 @@ import { ArrowRight, MapPin, Warehouse } from "lucide-react";
 import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 import { PropertyMap } from "@/components/site/PropertyMap";
-import { properties } from "@/data/properties";
+import { useProperties } from "@/lib/site-data";
 
 export const Route = createFileRoute("/properties/")({
   head: () => ({
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/properties/")({
 });
 
 function PropertiesPage() {
+  const properties = useProperties();
   const locations = properties.map((p) => ({ label: p.name, sub: p.location, lat: p.lat, lng: p.lng }));
 
   return (

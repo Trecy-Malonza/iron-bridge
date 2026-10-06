@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Truck, Warehouse } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { properties } from "@/data/properties";
+import { useProperties } from "@/lib/site-data";
 
 const CENTER = "translate-x-[-50%] translate-z-0 scale-100 opacity-100 z-[5] blur-0";
 const RIGHT =
@@ -28,6 +28,7 @@ function classFor(offset: number, total: number) {
 
 
 export function PropertyCarousel() {
+  const properties = useProperties();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const total = properties.length;

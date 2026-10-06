@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useBlogPosts } from "@/lib/site-data";
 import { ArrowRight, Clock, Search } from "lucide-react";
 
 import heroPark from "@/assets/hero-industrial-park.jpg";
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/blog")({
 
 const categories = ["All Posts", "Market Insights", "Logistics & Infrastructure", "Industrial Real Estate", "Company News"];
 
-const posts = [
+const fallbackPosts = [
   {
     category: "Market Insights",
     date: "May 20, 2025",
@@ -86,6 +87,18 @@ const posts = [
 ];
 
 function BlogPage() {
+  const { data: rows } = useBlogPosts();
+  const imgs = [warehouseDusk, warehouseInterior, heroPark];
+  const posts = rows
+    ? rows.map((r, i) => ({
+        category: r.category,
+        date: new Date(r.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+        title: r.title,
+        excerpt: r.excerpt,
+        read: `${Math.max(2, Math.ceil(r.excerpt.split(" ").length / 40))} min read`,
+        image: imgs[i % imgs.length],
+      }))
+    : fallbackPosts;
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
