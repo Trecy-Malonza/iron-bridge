@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { slugify, useCareers } from "@/lib/site-data";
 
 import warehouseDusk from "@/assets/warehouse-exterior.jpg";
 import { Footer } from "@/components/site/Footer";

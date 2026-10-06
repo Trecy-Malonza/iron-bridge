@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { useSiteSettings } from "@/lib/site-data";
 import { Clock, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from "lucide-react";
 
 import { Logo } from "./Logo";
 
 export function Footer() {
+  const settings = useSiteSettings();
   return (
     <footer className="bg-navy-deep text-navy-foreground">
       <div className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10">
@@ -63,15 +65,15 @@ export function Footer() {
             <ul className="mt-4 space-y-3 break-words text-sm text-navy-foreground/75">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground/60" />
-                +254 700 000 000
+                {settings.phone}
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground/60" />
-                info@ironbridge.co.ke
+                {settings.email}
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary-foreground/60" />
-                IronBridge Business Park, Maai Mahiu, Nakuru County, Kenya.
+                {settings.address}
               </li>
             </ul>
           </div>
