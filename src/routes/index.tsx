@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -111,6 +113,35 @@ const team = [
 
 function Index() {
   const properties = useProperties();
+  const [leadSending, setLeadSending] = useState(false);
+  const [leadMsg, setLeadMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  async function submitLead(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const f = new FormData(form);
+    const v = (k: string) => String(f.get(k) ?? "").trim();
+    const requirement = [
+      `Property type: ${v("Property Type")}`,
+      v("Preferred Location") && `Location: ${v("Preferred Location")}`,
+      v("Space Requirement") && `Space: ${v("Space Requirement")}`,
+      v("Budget (KES)") && `Budget: KES ${v("Budget (KES)")}`,
+      `Contact via: ${v("contact-method")}`,
+      v("Description") && `Notes: ${v("Description")}`,
+    ].filter(Boolean).join(" | ");
+    setLeadSending(true);
+    setLeadMsg(null);
+    const { error } = await supabase.from("admin_leads").insert({
+      name: v("Full Name").slice(0, 100),
+      company: v("Company / Organization").slice(0, 150),
+      email: v("Email Address").slice(0, 255),
+      phone: v("Phone Number").slice(0, 40),
+      requirement: requirement.slice(0, 2000),
+      status: "New",
+    });
+    setLeadSending(false);
+    if (error) setLeadMsg({ ok: false, text: "Sorry, your request couldn't be sent. Please try again." });
+    else { form.reset(); setLeadMsg({ ok: true, text: "Thank you — your request has been received. Our team will be in touch." }); }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -254,7 +285,7 @@ function Index() {
                 </div>
               </div>
 
-              <form className="mt-6 grid gap-x-3.5 gap-y-4 sm:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
+              <form className="mt-6 grid gap-x-3.5 gap-y-4 sm:grid-cols-2" onSubmit={submitLead}>
                 <Field label="Full Name" required placeholder="Your full name" Icon={User} />
                 <Field label="Company / Organization" placeholder="Company name" Icon={Building2} />
                 <Field label="Email Address" required type="email" placeholder="you@example.com" Icon={Mail} />
@@ -265,21 +296,22 @@ function Index() {
                 <Field label="Budget (KES)" placeholder="e.g. 500,000,000" Icon={Wallet} />
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <label className="text-[0.82rem] font-semibold text-navy">Description / Requirements</label>
-                  <textarea rows={4} placeholder="Tell us about your business and the type of industrial property you're looking for..." className="w-full rounded-lg border border-input bg-surface px-3.5 py-3 text-[0.85rem] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10" />
+                  <textarea name="Description" rows={4} maxLength={1500} placeholder="Tell us about your business and the type of industrial property you're looking for..." className="w-full rounded-lg border border-input bg-surface px-3.5 py-3 text-[0.85rem] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10" />
                 </div>
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <p className="text-[0.82rem] font-semibold text-navy">Preferred Contact Method</p>
                   <div className="flex flex-wrap gap-2.5">
                     {[{ label: "Phone", Icon: Phone }, { label: "Email", Icon: Mail }].map(({ label, Icon }, i) => (
                       <label key={label} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-input bg-surface px-4 py-2.5 text-[0.85rem] transition hover:border-primary">
-                        <input type="radio" name="contact-method" defaultChecked={i === 0} className="accent-primary" />
+                        <input type="radio" name="contact-method" value={label} defaultChecked={i === 0} className="accent-primary" />
                         <Icon className="h-4 w-4 text-muted-foreground" /> {label}
                       </label>
                     ))}
                     <div className="flex-1"><ChatAssistant /></div>
                   </div>
                 </div>
-                <button type="submit" className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary py-3.5 text-[0.9rem] font-semibold text-primary-foreground shadow-card transition hover:-translate-y-0.5 hover:bg-primary-dark">
+                {leadMsg && <p className={`sm:col-span-2 text-sm ${leadMsg.ok ? "text-primary" : "text-destructive"}`}>{leadMsg.text}</p>}
+                <button type="submit" disabled={leadSending} className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary py-3.5 text-[0.9rem] font-semibold text-primary-foreground shadow-card transition hover:-translate-y-0.5 hover:bg-primary-dark">
                   Find My Property <ArrowRight className="h-4 w-4" />
                 </button>
                 <p className="sm:col-span-2 flex items-center justify-center gap-2 text-[0.75rem] text-muted-foreground">
@@ -484,7 +516,9 @@ function Field({
           <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
         )}
         <input
+          name={label}
           type={type}
+          required={required}
           placeholder={placeholder}
           className={`w-full rounded-lg border border-input bg-surface py-2.5 pr-3.5 text-[0.85rem] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 ${
             Icon ? "pl-9.5" : "pl-3.5"
@@ -502,6 +536,8 @@ function SelectField({ label, options, required }: { label: string; options: str
         {label} {required && <span className="text-destructive">*</span>}
       </label>
       <select
+        name={label}
+        required={required}
         defaultValue=""
         className="w-full rounded-lg border border-input bg-surface px-3.5 py-2.5 text-[0.85rem] text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
       >

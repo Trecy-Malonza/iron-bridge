@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Bot, CheckCircle2, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
+import { supabase } from "@/integrations/supabase/client";
+
 import { AiChat } from "./AiChat";
 import { Logo } from "./Logo";
 
@@ -21,6 +23,8 @@ export function ContactDialog({
 
   const [sent, setSent] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   return (
     <>
@@ -63,9 +67,22 @@ export function ContactDialog({
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  setSent(true);
+                  const f = new FormData(e.currentTarget);
+                  const v = (k: string) => String(f.get(k) ?? "").trim();
+                  setSending(true);
+                  setErr(null);
+                  const { error } = await supabase.from("admin_inquiries").insert({
+                    sender_name: v("fullName").slice(0, 100),
+                    email: v("email").slice(0, 255),
+                    subject: `Website contact – ${v("phone")}`.slice(0, 200),
+                    message: v("description").slice(0, 2000),
+                    status: "Unread",
+                  });
+                  setSending(false);
+                  if (error) setErr("Sorry, your message couldn't be sent. Please try again.");
+                  else setSent(true);
                 }}
                 className="mt-5 space-y-3"
               >
@@ -96,11 +113,13 @@ export function ContactDialog({
                   placeholder="Description — tell us what you're looking for"
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                 />
+                {err && <p className="text-sm text-destructive">{err}</p>}
                 <button
                   type="submit"
+                  disabled={sending}
                   className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-dark"
                 >
-                  Send Message
+                  {sending ? "Sending…" : "Send Message"}
                 </button>
               </form>
             )}
