@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the dashboard property editor in its own component with scoped styling; this isolates its multi-tab form from the other management screens.

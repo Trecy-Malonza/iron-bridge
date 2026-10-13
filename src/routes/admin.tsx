@@ -30,6 +30,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
 import { CrudView } from "@/components/admin/CrudView";
+import { PropertyEditor } from "@/components/admin/PropertyEditor";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import "@/styles/admin-dashboard.css";
@@ -332,22 +333,7 @@ function DataCard({ title, subtitle, children, action }: { title: string; subtit
 }
 
 function PropertiesView() {
-  return (
-    <CrudView
-      table="admin_properties"
-      title="Properties"
-      subtitle="Industrial space listed by IronBridge."
-      singular="Property"
-      fields={[
-        { key: "name", label: "Name", placeholder: "e.g. Grade A Warehouse" },
-        { key: "location", label: "Location", placeholder: "e.g. Maai Mahiu Industrial Area" },
-        { key: "size", label: "Size", placeholder: "e.g. 12,000 sqm" },
-        { key: "price", label: "Price", placeholder: "e.g. On request", required: false },
-        { key: "status", label: "Status", type: "select", options: ["Available", "Under Offer", "Leased", "Draft"], status: true },
-        { key: "description", label: "Description", type: "textarea", inTable: false, required: false },
-      ]}
-    />
-  );
+  return <PropertyEditor />;
 }
 
 function CategoriesView() {
