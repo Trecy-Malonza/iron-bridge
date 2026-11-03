@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Building2, CalendarDays, ChevronUp, Image, Info, Lightbulb, ListChecks, MapPin, Plus, Send, Settings2, Trash2 } from "lucide-react";
+import { Building2, CalendarDays, ChevronUp, Image, Info, Lightbulb, ListChecks, MapPin, Plus, Send, Settings2, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import warehouseExterior from "@/assets/warehouse-exterior.jpg";
+import warehouseGradeA from "@/assets/warehouse-grade-a.jpg";
+import warehouseInterior from "@/assets/warehouse-interior.jpg";
+import warehouseYard from "@/assets/warehouse-yard.jpg";
 import "@/styles/property-editor.css";
 
 const tabs = [
@@ -14,6 +18,12 @@ const tabs = [
   { label: "SEO & Additional", icon: Settings2 },
 ];
 const defaultHighlights = ["24/7 Security", "CCTV Surveillance", "Fire Sprinkler System", "Dock Levelers", "High Ceiling", "Ample Parking"];
+const presetImages = [
+  { label: "Exterior", url: warehouseExterior },
+  { label: "Grade A", url: warehouseGradeA },
+  { label: "Interior", url: warehouseInterior },
+  { label: "Yard", url: warehouseYard },
+];
 
 export function PropertyEditor() {
   const queryClient = useQueryClient();
@@ -29,6 +39,7 @@ export function PropertyEditor() {
   const [featured, setFeatured] = useState(false);
   const [highlights, setHighlights] = useState(defaultHighlights);
   const [selectedHighlights, setSelectedHighlights] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const [addingHighlight, setAddingHighlight] = useState(false);
   const [newHighlight, setNewHighlight] = useState("");
   const [propertyType, setPropertyType] = useState("Warehouse");
@@ -36,6 +47,15 @@ export function PropertyEditor() {
   const [code, setCode] = useState("");
   const [offer, setOffer] = useState("For Lease");
   const [period, setPeriod] = useState("/ per month");
+  const [clearHeight, setClearHeight] = useState("");
+  const [dockDoors, setDockDoors] = useState("");
+  const [yearBuilt, setYearBuilt] = useState("");
+  const [leaseType, setLeaseType] = useState("Long Term");
+  const [zoning, setZoning] = useState("Industrial");
+  const [powerSupply, setPowerSupply] = useState("");
+  const [waterSupply, setWaterSupply] = useState("");
+  const [security, setSecurity] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [locations, setLocations] = useState<Tables<"admin_locations">[]>([]);
   const [categories, setCategories] = useState<Tables<"admin_categories">[]>([]);
   const [properties, setProperties] = useState<Tables<"admin_properties">[]>([]);
@@ -72,6 +92,11 @@ export function PropertyEditor() {
       price: price.trim() ? `${price.trim()} ${period}` : "On request",
       description: description.trim(),
       status: draft || visibility === "Private" ? "Hidden" : availability,
+      property_code: code.trim(), property_type: propertyType, category: category.trim(), offer, featured,
+      highlights: selectedHighlights, images,
+      clear_height: clearHeight.trim(), dock_doors: dockDoors.trim(), year_built: yearBuilt.trim(),
+      lease_type: leaseType, zoning: zoning.trim(), power_supply: powerSupply.trim(),
+      water_supply: waterSupply.trim(), security: security.trim(),
     };
     const request = editingId
       ? supabase.from("admin_properties").update(payload).eq("id", editingId)
@@ -93,6 +118,13 @@ export function PropertyEditor() {
     setPrice(row.price.replace(/\s*\/ per (month|sqm|year)$/, "").replace(/^On request$/, ""));
     setDescription(row.description); setAvailability(row.status === "Hidden" ? "Available" : row.status);
     setPublishStatus(row.status === "Hidden" || row.status === "Draft" ? "Draft" : "Published");
+    setCode(row.property_code); setPropertyType(row.property_type); setCategory(row.category);
+    setOffer(row.offer || "For Lease"); setFeatured(row.featured);
+    setSelectedHighlights(Array.isArray(row.highlights) ? (row.highlights as string[]) : []);
+    setImages(Array.isArray(row.images) ? (row.images as string[]) : []);
+    setClearHeight(row.clear_height); setDockDoors(row.dock_doors); setYearBuilt(row.year_built);
+    setLeaseType(row.lease_type || "Long Term"); setZoning(row.zoning || "Industrial");
+    setPowerSupply(row.power_supply); setWaterSupply(row.water_supply); setSecurity(row.security);
     setShowListings(false); setTab(0); setNotice(""); setError("");
   }
 
@@ -107,6 +139,33 @@ export function PropertyEditor() {
 
   function toggleHighlight(label: string) {
     setSelectedHighlights((items) => items.includes(label) ? items.filter((item) => item !== label) : [...items, label]);
+  }
+
+  async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (!files.length) return;
+    setUploading(true);
+    setError("");
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) { setError(`${file.name} is not an image.`); continue; }
+      if (file.size > 5 * 1024 * 1024) { setError(`${file.name} is larger than 5MB.`); continue; }
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+      const { data, error: uploadError } = await supabase
+        .from("admin_property_images")
+        .insert({ title: file.name, mime_type: file.type, data: dataUrl.split(",")[1] ?? "", byte_size: file.size })
+        .select("id")
+        .single();
+      if (uploadError || !data) { setError(uploadError?.message ?? "Upload failed. Please try again."); continue; }
+      const url = `/api/public/property-images/${data.id}`;
+      setImages((items) => (items.includes(url) ? items : [...items, url]));
+    }
+    setUploading(false);
   }
 
   return (
@@ -143,8 +202,41 @@ export function PropertyEditor() {
               <div className="ib-property-section"><h3>Short Description</h3><p>A short summary of the property that will appear on listing cards.</p><textarea aria-label="Short Description" rows={4} maxLength={300} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe your industrial space…" /><div className="ib-property-counter">{description.length} / 300</div></div>
               <div className="ib-property-section"><h3>Property Highlights</h3><p>Add key highlights about this property.</p><div className="ib-property-highlights">{highlights.map((item) => <label key={item}><input type="checkbox" checked={selectedHighlights.includes(item)} onChange={() => toggleHighlight(item)} />{item}</label>)}<Button variant="outline" size="sm" onClick={() => setAddingHighlight(!addingHighlight)}><Plus /> Add Highlight</Button></div>{addingHighlight && <form className="ib-property-add-highlight" onSubmit={(e) => { e.preventDefault(); const label = newHighlight.trim(); if (!label) return; setHighlights((items) => items.includes(label) ? items : [...items, label]); setSelectedHighlights((items) => items.includes(label) ? items : [...items, label]); setNewHighlight(""); setAddingHighlight(false); }}><input aria-label="New highlight" placeholder="Highlight name" value={newHighlight} onChange={(e) => setNewHighlight(e.target.value)} /><Button type="submit" size="sm">Add</Button></form>}</div>
             </>}
-            {tab === 1 && <><h2>Details & Features</h2><div className="ib-property-fields"><label>Property Size<input value={size} onChange={(e) => setSize(e.target.value)} placeholder="e.g. 12,000 sqm" /></label><label>Availability<select value={availability} onChange={(e) => setAvailability(e.target.value)}><option>Available</option><option>Under Offer</option><option>Leased</option></select></label></div><div className="ib-property-section"><h3>Property Highlights</h3><div className="ib-property-highlights">{highlights.map((item) => <label key={item}><input type="checkbox" checked={selectedHighlights.includes(item)} onChange={() => toggleHighlight(item)} />{item}</label>)}</div></div></>}
-            {tab === 2 && <><h2>Media</h2><div className="ib-property-media-empty"><Image /><p>Property images are managed in Media Library.</p><p>Listings currently use the shared warehouse illustration.</p></div></>}
+            {tab === 1 && <><h2>Details & Features</h2><div className="ib-property-fields"><label>Property Size<input value={size} onChange={(e) => setSize(e.target.value)} placeholder="e.g. 12,000 sqm" /></label><label>Availability<select value={availability} onChange={(e) => setAvailability(e.target.value)}><option>Available</option><option>Under Offer</option><option>Leased</option></select></label><label>Clear Height<input value={clearHeight} onChange={(e) => setClearHeight(e.target.value)} placeholder="e.g. 11.5 Meters" /></label><label>Dock Doors<input value={dockDoors} onChange={(e) => setDockDoors(e.target.value)} placeholder="e.g. 12" /></label><label>Year Built<input value={yearBuilt} onChange={(e) => setYearBuilt(e.target.value)} placeholder="e.g. 2023" /></label><label>Lease Type<select value={leaseType} onChange={(e) => setLeaseType(e.target.value)}><option>Long Term</option><option>Short Term</option><option>Sale</option></select></label><label>Zoning<input value={zoning} onChange={(e) => setZoning(e.target.value)} placeholder="e.g. Industrial" /></label><label>Power Supply<input value={powerSupply} onChange={(e) => setPowerSupply(e.target.value)} placeholder="e.g. 1,000 KVA" /></label><label>Water Supply<input value={waterSupply} onChange={(e) => setWaterSupply(e.target.value)} placeholder="e.g. Borehole + County" /></label><label>Security<input value={security} onChange={(e) => setSecurity(e.target.value)} placeholder="e.g. 24/7 Manned Security" /></label></div><div className="ib-property-section"><h3>Property Highlights</h3><div className="ib-property-highlights">{highlights.map((item) => <label key={item}><input type="checkbox" checked={selectedHighlights.includes(item)} onChange={() => toggleHighlight(item)} />{item}</label>)}</div></div></>}
+            {tab === 2 && <>
+              <h2>Media</h2>
+              <p className="ib-property-media-hint">Photos for this property. The first photo is the cover shown on listing cards and the homepage.</p>
+              {images.length > 0 && (
+                <div className="ib-property-gallery">
+                  {images.map((url, index) => (
+                    <div key={url} className="ib-property-gallery-item">
+                      <img src={url} alt={`${name || "Property"} photo ${index + 1}`} />
+                      {index === 0 && <span className="ib-property-gallery-cover">Cover</span>}
+                      <button type="button" aria-label={`Remove photo ${index + 1}`} onClick={() => setImages((items) => items.filter((item) => item !== url))}><X /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {images.length === 0 && <div className="ib-property-media-empty"><Image /><p>No photos yet. Add one below.</p><p>Listings without photos use the shared warehouse illustration.</p></div>}
+              <div className="ib-property-section">
+                <h3>Add Photos</h3>
+                <p>Choose one of the ready warehouse photos, or upload your own (JPG or PNG, up to 5MB).</p>
+                <div className="ib-property-gallery-presets">
+                  {presetImages.map((preset) => (
+                    <button key={preset.url} type="button" onClick={() => setImages((items) => (items.includes(preset.url) ? items : [...items, preset.url]))}>
+                      <img src={preset.url} alt={preset.label} />
+                      <span>{preset.label}</span>
+                    </button>
+                  ))}
+                  <label className="ib-property-upload">
+                    <Upload />
+                    <span>Upload photos</span>
+                    <input type="file" accept="image/*" multiple onChange={(e) => void handleUpload(e)} />
+                  </label>
+                </div>
+                {uploading && <p className="ib-property-uploading">Uploading photos…</p>}
+              </div>
+            </>}
             {tab === 3 && <><h2>Location</h2><div className="ib-property-fields"><label>Property Location<input list="ib-editor-location-list" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Select or enter a location" /><datalist id="ib-editor-location-list">{locations.map((item) => <option key={item.id} value={item.name} />)}</datalist></label></div>{locations.filter((item) => item.name === location).map((item) => <div key={item.id} className="ib-property-location"><MapPin /><div><h3>{item.name}</h3><p>{item.region}</p><p>{Number(item.lat)}, {Number(item.lng)}</p></div></div>)}</>}
             {tab === 4 && <><h2>SEO & Additional</h2><div className="ib-property-fields"><label>Page Title<input value={name} onChange={(e) => setName(e.target.value)} /></label></div><div className="ib-property-section"><h3>Description</h3><textarea aria-label="Page description" value={description} maxLength={300} rows={4} onChange={(e) => setDescription(e.target.value)} /></div></>}
           </section>

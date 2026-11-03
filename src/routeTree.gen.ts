@@ -21,6 +21,7 @@ import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersPropertyManagerRouteImport } from './routes/careers.property-manager'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
+import { Route as ApiPublicPropertyImagesIdRouteImport } from './routes/api/public/property-images.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,12 @@ const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
   path: '/properties/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPropertyImagesIdRoute =
+  ApiPublicPropertyImagesIdRouteImport.update({
+    id: '/api/public/property-images/$id',
+    path: '/api/public/property-images/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers/': typeof CareersIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/api/public/property-images/$id': typeof ApiPublicPropertyImagesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers': typeof CareersIndexRoute
   '/properties': typeof PropertiesIndexRoute
+  '/api/public/property-images/$id': typeof ApiPublicPropertyImagesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/properties/$slug': typeof PropertiesSlugRoute
   '/careers/': typeof CareersIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/api/public/property-images/$id': typeof ApiPublicPropertyImagesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/properties/$slug'
     | '/careers/'
     | '/properties/'
+    | '/api/public/property-images/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/properties/$slug'
     | '/careers'
     | '/properties'
+    | '/api/public/property-images/$id'
   id:
     | '__root__'
     | '/'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/properties/$slug'
     | '/careers/'
     | '/properties/'
+    | '/api/public/property-images/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   PropertiesSlugRoute: typeof PropertiesSlugRoute
   CareersIndexRoute: typeof CareersIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
+  ApiPublicPropertyImagesIdRoute: typeof ApiPublicPropertyImagesIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/property-images/$id': {
+      id: '/api/public/property-images/$id'
+      path: '/api/public/property-images/$id'
+      fullPath: '/api/public/property-images/$id'
+      preLoaderRoute: typeof ApiPublicPropertyImagesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   PropertiesSlugRoute: PropertiesSlugRoute,
   CareersIndexRoute: CareersIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
+  ApiPublicPropertyImagesIdRoute: ApiPublicPropertyImagesIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
