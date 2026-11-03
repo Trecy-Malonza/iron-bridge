@@ -286,37 +286,82 @@ export type Database = {
       }
       admin_properties: {
         Row: {
+          category: string
+          clear_height: string
           created_at: string
           description: string
+          dock_doors: string
+          featured: boolean
+          highlights: Json
           id: string
+          images: Json
+          lease_type: string
           location: string
           name: string
+          offer: string
+          power_supply: string
           price: string
+          property_code: string
+          property_type: string
+          security: string
           size: string
           status: string
           updated_at: string
+          water_supply: string
+          year_built: string
+          zoning: string
         }
         Insert: {
+          category?: string
+          clear_height?: string
           created_at?: string
           description?: string
+          dock_doors?: string
+          featured?: boolean
+          highlights?: Json
           id?: string
+          images?: Json
+          lease_type?: string
           location?: string
           name: string
+          offer?: string
+          power_supply?: string
           price?: string
+          property_code?: string
+          property_type?: string
+          security?: string
           size?: string
           status?: string
           updated_at?: string
+          water_supply?: string
+          year_built?: string
+          zoning?: string
         }
         Update: {
+          category?: string
+          clear_height?: string
           created_at?: string
           description?: string
+          dock_doors?: string
+          featured?: boolean
+          highlights?: Json
           id?: string
+          images?: Json
+          lease_type?: string
           location?: string
           name?: string
+          offer?: string
+          power_supply?: string
           price?: string
+          property_code?: string
+          property_type?: string
+          security?: string
           size?: string
           status?: string
           updated_at?: string
+          water_supply?: string
+          year_built?: string
+          zoning?: string
         }
         Relationships: []
       }
