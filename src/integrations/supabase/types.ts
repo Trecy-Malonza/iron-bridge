@@ -365,6 +365,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_property_images: {
+        Row: {
+          byte_size: number
+          created_at: string
+          data: string
+          id: string
+          mime_type: string
+          title: string
+        }
+        Insert: {
+          byte_size?: number
+          created_at?: string
+          data: string
+          id?: string
+          mime_type?: string
+          title?: string
+        }
+        Update: {
+          byte_size?: number
+          created_at?: string
+          data?: string
+          id?: string
+          mime_type?: string
+          title?: string
+        }
+        Relationships: []
+      }
       admin_settings: {
         Row: {
           address: string
