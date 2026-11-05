@@ -1,0 +1,4 @@
+- [ ] Add publish date, visibility, publish status, and SEO fields to properties.
+- [ ] Finish the property editor calendar, gallery, and extended detail form wiring.
+- [ ] Render saved property photos and details on public listings and detail pages.
+- [ ] Verify the calendar, save/read flow, and preview diagnostics.
