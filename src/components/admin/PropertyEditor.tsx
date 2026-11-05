@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Building2, CalendarDays, ChevronUp, Image, Info, Lightbulb, ListChecks, MapPin, Plus, Send, Settings2, Trash2, Upload, X } from "lucide-react";
+import { format } from "date-fns";
+import { Building2, CalendarDays, ChevronLeft, ChevronRight, ChevronUp, Image, Info, Lightbulb, ListChecks, MapPin, Plus, Send, Settings2, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import warehouseExterior from "@/assets/warehouse-exterior.jpg";
@@ -36,6 +40,7 @@ export function PropertyEditor() {
   const [availability, setAvailability] = useState("Available");
   const [publishStatus, setPublishStatus] = useState("Draft");
   const [visibility, setVisibility] = useState("Public");
+  const [publishDate, setPublishDate] = useState("");
   const [featured, setFeatured] = useState(false);
   const [highlights, setHighlights] = useState(defaultHighlights);
   const [selectedHighlights, setSelectedHighlights] = useState<string[]>([]);
@@ -55,6 +60,8 @@ export function PropertyEditor() {
   const [powerSupply, setPowerSupply] = useState("");
   const [waterSupply, setWaterSupply] = useState("");
   const [security, setSecurity] = useState("");
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const [locations, setLocations] = useState<Tables<"admin_locations">[]>([]);
   const [categories, setCategories] = useState<Tables<"admin_categories">[]>([]);
@@ -91,12 +98,16 @@ export function PropertyEditor() {
       name: name.trim(), location: location.trim(), size: size.trim(),
       price: price.trim() ? `${price.trim()} ${period}` : "On request",
       description: description.trim(),
-      status: draft || visibility === "Private" ? "Hidden" : availability,
+      status: availability,
+      publish_status: draft ? "Draft" : publishStatus,
+      visibility,
+      publish_date: publishDate ? new Date(`${publishDate}T00:00:00.000Z`).toISOString() : null,
       property_code: code.trim(), property_type: propertyType, category: category.trim(), offer, featured,
       highlights: selectedHighlights, images,
       clear_height: clearHeight.trim(), dock_doors: dockDoors.trim(), year_built: yearBuilt.trim(),
       lease_type: leaseType, zoning: zoning.trim(), power_supply: powerSupply.trim(),
       water_supply: waterSupply.trim(), security: security.trim(),
+      seo_title: seoTitle.trim(), seo_description: seoDescription.trim(),
     };
     const request = editingId
       ? supabase.from("admin_properties").update(payload).eq("id", editingId)
@@ -108,7 +119,7 @@ export function PropertyEditor() {
       setEditingId(data.id);
       setProperties((rows) => [data, ...rows.filter((row) => row.id !== data.id)]);
     }
-    setPublishStatus(draft ? "Draft" : "Published");
+    setPublishStatus(draft ? "Draft" : publishStatus);
     setNotice(draft ? "Property saved as a draft." : visibility === "Private" ? "Private property saved." : "Property published to the website.");
     await queryClient.invalidateQueries({ queryKey: ["site", "properties"] });
   }
@@ -118,6 +129,9 @@ export function PropertyEditor() {
     setPrice(row.price.replace(/\s*\/ per (month|sqm|year)$/, "").replace(/^On request$/, ""));
     setDescription(row.description); setAvailability(row.status === "Hidden" ? "Available" : row.status);
     setPublishStatus(row.status === "Hidden" || row.status === "Draft" ? "Draft" : "Published");
+    setPublishStatus(row.publish_status || (row.status === "Hidden" || row.status === "Draft" ? "Draft" : "Published"));
+    setVisibility(row.visibility || "Public");
+    setPublishDate(row.publish_date ? new Date(row.publish_date).toISOString().slice(0, 10) : "");
     setCode(row.property_code); setPropertyType(row.property_type); setCategory(row.category);
     setOffer(row.offer || "For Lease"); setFeatured(row.featured);
     setSelectedHighlights(Array.isArray(row.highlights) ? (row.highlights as string[]) : []);
@@ -125,6 +139,7 @@ export function PropertyEditor() {
     setClearHeight(row.clear_height); setDockDoors(row.dock_doors); setYearBuilt(row.year_built);
     setLeaseType(row.lease_type || "Long Term"); setZoning(row.zoning || "Industrial");
     setPowerSupply(row.power_supply); setWaterSupply(row.water_supply); setSecurity(row.security);
+    setSeoTitle(row.seo_title || ""); setSeoDescription(row.seo_description || "");
     setShowListings(false); setTab(0); setNotice(""); setError("");
   }
 
@@ -174,7 +189,7 @@ export function PropertyEditor() {
         <div><h1>{showListings ? "Properties" : editingId ? "Edit Property" : "Add New Property"}</h1><p>{showListings ? "Your industrial property listings." : "Add a new industrial property to your listings."}</p></div>
         <div className="ib-property-heading-actions">
           <Button variant="ghost" size="sm" onClick={() => { setShowListings(!showListings); setNotice(""); }}>{showListings ? "Back to property form" : "View Properties"}</Button>
-          {!showListings && <><Button variant="outline" disabled={saving} onClick={() => void save(true)}>Save as Draft</Button><Button disabled={saving} onClick={() => void save(false)}><Send /> {saving ? "Saving…" : "Publish Property"}</Button></>}
+          {!showListings && <><Button variant="outline" disabled={saving} onClick={() => void save(true)}>Save as Draft</Button><Button disabled={saving} onClick={() => void save(false)}><Send /> {saving ? "Saving…" : publishStatus === "Draft" ? "Save Draft" : "Publish Property"}</Button></>}
         </div>
       </div>
       {error && <div className="ib-property-error" role="alert">{error}</div>}
@@ -212,6 +227,7 @@ export function PropertyEditor() {
                     <div key={url} className="ib-property-gallery-item">
                       <img src={url} alt={`${name || "Property"} photo ${index + 1}`} />
                       {index === 0 && <span className="ib-property-gallery-cover">Cover</span>}
+                      {index > 0 && <Button type="button" variant="outline" size="sm" className="ib-property-gallery-make-cover" onClick={() => setImages((items) => [url, ...items.filter((item) => item !== url)])}>Make cover</Button>}
                       <button type="button" aria-label={`Remove photo ${index + 1}`} onClick={() => setImages((items) => items.filter((item) => item !== url))}><X /></button>
                     </div>
                   ))}
@@ -238,10 +254,10 @@ export function PropertyEditor() {
               </div>
             </>}
             {tab === 3 && <><h2>Location</h2><div className="ib-property-fields"><label>Property Location<input list="ib-editor-location-list" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Select or enter a location" /><datalist id="ib-editor-location-list">{locations.map((item) => <option key={item.id} value={item.name} />)}</datalist></label></div>{locations.filter((item) => item.name === location).map((item) => <div key={item.id} className="ib-property-location"><MapPin /><div><h3>{item.name}</h3><p>{item.region}</p><p>{Number(item.lat)}, {Number(item.lng)}</p></div></div>)}</>}
-            {tab === 4 && <><h2>SEO & Additional</h2><div className="ib-property-fields"><label>Page Title<input value={name} onChange={(e) => setName(e.target.value)} /></label></div><div className="ib-property-section"><h3>Description</h3><textarea aria-label="Page description" value={description} maxLength={300} rows={4} onChange={(e) => setDescription(e.target.value)} /></div></>}
+            {tab === 4 && <><h2>SEO & Additional</h2><div className="ib-property-fields"><label>Page Title<input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} placeholder={name || "Search result title"} maxLength={70} /></label><label>Page Description<textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} placeholder={description || "Short description for search results"} maxLength={160} rows={3} /></label></div><div className="ib-property-section"><h3>Page preview</h3><p>{seoTitle || name || "Property title"}</p><p>{seoDescription || description || "Property description"}</p></div></>}
           </section>
           <aside className="ib-property-side">
-            <section className="ib-property-side-section"><Button variant="ghost" className="ib-property-side-title" onClick={() => setStatusOpen(!statusOpen)} aria-expanded={statusOpen}>Property Status<ChevronUp className={statusOpen ? "" : "rotate-180"} /></Button>{statusOpen && <div className="ib-property-status-fields"><label>Publish Status<select value={publishStatus} onChange={(e) => setPublishStatus(e.target.value)}><option>Draft</option><option>Published</option></select></label><label>Visibility<select value={visibility} onChange={(e) => setVisibility(e.target.value)}><option>Public</option><option>Private</option></select></label><label>Publish Date<div className="ib-property-date"><CalendarDays /><input type="text" value="On publish" readOnly aria-label="Publish Date" /></div></label></div>}</section>
+            <section className="ib-property-side-section"><Button variant="ghost" className="ib-property-side-title" onClick={() => setStatusOpen(!statusOpen)} aria-expanded={statusOpen}>Property Status<ChevronUp className={statusOpen ? "" : "rotate-180"} /></Button>{statusOpen && <div className="ib-property-status-fields"><label>Publish Status<select value={publishStatus} onChange={(e) => setPublishStatus(e.target.value)}><option>Draft</option><option>Published</option></select></label><label>Visibility<select value={visibility} onChange={(e) => setVisibility(e.target.value)}><option>Public</option><option>Private</option></select></label><label>Publish Date<Popover><PopoverTrigger asChild><Button type="button" variant="outline" className="ib-property-date-trigger"><CalendarDays /><span>{publishDate ? format(new Date(`${publishDate}T00:00:00`), "PPP") : "Choose a date"}</span></Button></PopoverTrigger><PopoverContent align="start" className="w-auto p-0"><Calendar mode="single" selected={publishDate ? new Date(`${publishDate}T00:00:00`) : undefined} onSelect={(date) => setPublishDate(date ? format(date, "yyyy-MM-dd") : "")} initialFocus className={cn("p-3 pointer-events-auto")} /></PopoverContent></Popover>{publishDate && <Button type="button" variant="ghost" size="sm" className="ib-property-clear-date" onClick={() => setPublishDate("")}>Clear date</Button>}</label></div>}</section>
             <section className="ib-property-side-section"><div className="ib-property-featured-heading"><h3>Featured Property</h3><input type="checkbox" role="switch" aria-label="Featured Property" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /></div><p>Mark as featured to highlight this property on the homepage.</p><div className="ib-property-info"><Info /><span>Featured properties appear in the featured carousel on homepage.</span></div></section>
             <section className="ib-property-side-section ib-property-tips"><h3><Lightbulb />Quick Tips</h3><ul><li>Use high quality images (minimum 1200px width)</li><li>Provide accurate size and pricing</li><li>Add as many amenities as possible</li><li>Make sure location is correct on the map</li><li>Featured properties get more visibility</li></ul></section>
           </aside>
