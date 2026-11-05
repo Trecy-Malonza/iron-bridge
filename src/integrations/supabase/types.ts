@@ -303,10 +303,15 @@ export type Database = {
           price: string
           property_code: string
           property_type: string
+          publish_date: string | null
+          publish_status: string
           security: string
+          seo_description: string
+          seo_title: string
           size: string
           status: string
           updated_at: string
+          visibility: string
           water_supply: string
           year_built: string
           zoning: string
@@ -329,10 +334,15 @@ export type Database = {
           price?: string
           property_code?: string
           property_type?: string
+          publish_date?: string | null
+          publish_status?: string
           security?: string
+          seo_description?: string
+          seo_title?: string
           size?: string
           status?: string
           updated_at?: string
+          visibility?: string
           water_supply?: string
           year_built?: string
           zoning?: string
@@ -355,10 +365,15 @@ export type Database = {
           price?: string
           property_code?: string
           property_type?: string
+          publish_date?: string | null
+          publish_status?: string
           security?: string
+          seo_description?: string
+          seo_title?: string
           size?: string
           status?: string
           updated_at?: string
+          visibility?: string
           water_supply?: string
           year_built?: string
           zoning?: string
