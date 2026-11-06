@@ -259,26 +259,50 @@ export type Database = {
       }
       admin_pages: {
         Row: {
+          body_content: string
+          canonical_url: string
           created_at: string
+          hero_image: string
           id: string
+          keywords: Json
           path: string
+          publish_date: string | null
+          seo_description: string
+          seo_title: string
           status: string
+          subtitle: string
           title: string
           updated_at: string
         }
         Insert: {
+          body_content?: string
+          canonical_url?: string
           created_at?: string
+          hero_image?: string
           id?: string
+          keywords?: Json
           path?: string
+          publish_date?: string | null
+          seo_description?: string
+          seo_title?: string
           status?: string
+          subtitle?: string
           title: string
           updated_at?: string
         }
         Update: {
+          body_content?: string
+          canonical_url?: string
           created_at?: string
+          hero_image?: string
           id?: string
+          keywords?: Json
           path?: string
+          publish_date?: string | null
+          seo_description?: string
+          seo_title?: string
           status?: string
+          subtitle?: string
           title?: string
           updated_at?: string
         }
@@ -442,39 +466,72 @@ export type Database = {
       }
       careers: {
         Row: {
+          application_email: string
+          application_type: string
+          application_url: string
+          benefits: Json
           created_at: string
           department: string
           description: string
           employment_type: string
           experience: string
+          expiry_date: string | null
+          featured: boolean
           id: string
           location: string
+          publish_date: string | null
+          requirements: Json
+          salary_range: string
+          seo_description: string
+          seo_title: string
           status: string
           summary: string
           title: string
           updated_at: string
         }
         Insert: {
+          application_email?: string
+          application_type?: string
+          application_url?: string
+          benefits?: Json
           created_at?: string
           department?: string
           description?: string
           employment_type?: string
           experience?: string
+          expiry_date?: string | null
+          featured?: boolean
           id?: string
           location?: string
+          publish_date?: string | null
+          requirements?: Json
+          salary_range?: string
+          seo_description?: string
+          seo_title?: string
           status?: string
           summary?: string
           title: string
           updated_at?: string
         }
         Update: {
+          application_email?: string
+          application_type?: string
+          application_url?: string
+          benefits?: Json
           created_at?: string
           department?: string
           description?: string
           employment_type?: string
           experience?: string
+          expiry_date?: string | null
+          featured?: boolean
           id?: string
           location?: string
+          publish_date?: string | null
+          requirements?: Json
+          salary_range?: string
+          seo_description?: string
+          seo_title?: string
           status?: string
           summary?: string
           title?: string
