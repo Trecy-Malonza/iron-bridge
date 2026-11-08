@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep the dashboard property editor in its own component with scoped styling; this isolates its multi-tab form from the other management screens.
+- Keep the Careers and Leads workspaces in separate components with scoped styling so their editorial and CRM workflows remain isolated.
