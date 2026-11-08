@@ -2,3 +2,5 @@
 - [ ] Finish the property editor calendar, gallery, and extended detail form wiring.
 - [ ] Render saved property photos and details on public listings and detail pages.
 - [ ] Verify the calendar, save/read flow, and preview diagnostics.
+- [ ] Match the Careers page editor, job editor, and Leads workspace to the supplied screenshots.
+- [ ] Verify the Careers and Leads screens and their save/filter actions in the preview.
