@@ -15,12 +15,10 @@ import {
   MapPin,
   Menu,
   MessageSquare,
-  Pencil,
   Plus,
   Search,
   Settings,
   Shield,
-  Trash2,
   UserRound,
   Users,
   X,
@@ -31,8 +29,10 @@ import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
 import { CrudView } from "@/components/admin/CrudView";
 import { PropertyEditor } from "@/components/admin/PropertyEditor";
+import { CareersWorkspace } from "@/components/admin/CareersWorkspace";
+import { LeadsWorkspace } from "@/components/admin/LeadsWorkspace";
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import type { Tables } from "@/integrations/supabase/types";
 import "@/styles/admin-dashboard.css";
 import { AdminAuth } from "@/components/admin/AdminAuth";
 
@@ -63,19 +63,7 @@ export const Route = createFileRoute("/admin")({
 });
 
 type Career = Tables<"careers">;
-type CareerForm = Omit<TablesInsert<"careers">, "id" | "created_at" | "updated_at">;
 type View = "dashboard" | "properties" | "categories" | "locations" | "amenities" | "careers" | "leads" | "inquiries" | "clients" | "blog" | "media" | "pages" | "users" | "roles" | "settings";
-
-const emptyForm: CareerForm = {
-  title: "",
-  department: "Operations",
-  location: "Maai Mahiu, Kenya",
-  employment_type: "Full-time",
-  experience: "3-5 Yrs Exp",
-  summary: "",
-  description: "",
-  status: "Published",
-};
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -83,10 +71,6 @@ function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [careers, setCareers] = useState<Career[]>([]);
   const [loadingCareers, setLoadingCareers] = useState(true);
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingCareer, setEditingCareer] = useState<Career | null>(null);
-  const [form, setForm] = useState<CareerForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -108,56 +92,6 @@ function AdminDashboard() {
     setView(nextView);
     setMobileOpen(false);
     setNotice(null);
-  }
-
-  function openNewCareer() {
-    setEditingCareer(null);
-    setForm(emptyForm);
-    setFormOpen(true);
-  }
-
-  function openEditCareer(career: Career) {
-    setEditingCareer(career);
-    setForm({
-      title: career.title,
-      department: career.department,
-      location: career.location,
-      employment_type: career.employment_type,
-      experience: career.experience,
-      summary: career.summary,
-      description: career.description,
-      status: career.status,
-    });
-    setFormOpen(true);
-  }
-
-  async function saveCareer(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSaving(true);
-    setNotice(null);
-    const result = editingCareer
-      ? await supabase.from("careers").update(form).eq("id", editingCareer.id).select().single()
-      : await supabase.from("careers").insert(form).select().single();
-
-    if (result.error) {
-      setNotice(result.error.message);
-    } else {
-      setFormOpen(false);
-      setNotice(editingCareer ? "Career updated successfully." : "Career added successfully.");
-      await loadCareers();
-    }
-    setSaving(false);
-  }
-
-  async function deleteCareer(career: Career) {
-    if (!window.confirm(`Delete “${career.title}”?`)) return;
-    const { error } = await supabase.from("careers").delete().eq("id", career.id);
-    if (error) {
-      setNotice(error.message);
-      return;
-    }
-    setNotice("Career deleted successfully.");
-    await loadCareers();
   }
 
   const [profileEmail, setProfileEmail] = useState("");
@@ -240,21 +174,12 @@ function AdminDashboard() {
         <main className="ib-admin-content">
           {notice && <div className="ib-admin-notice" role="status"><CheckCircle2 /> {notice}</div>}
           {view === "dashboard" && <DashboardView careers={careers} publishedCareers={publishedCareers} onOpenCareers={() => selectView("careers")} />}
-          {view === "careers" && (
-            <CareersView
-              careers={careers}
-              publishedCareers={publishedCareers}
-              loading={loadingCareers}
-              onAdd={openNewCareer}
-              onEdit={openEditCareer}
-              onDelete={deleteCareer}
-            />
-          )}
+          {view === "careers" && <CareersWorkspace careers={careers} loading={loadingCareers} onRefresh={loadCareers} />}
           {view === "properties" && <PropertiesView />}
           {view === "categories" && <CategoriesView />}
           {view === "locations" && <LocationsView />}
           {view === "amenities" && <AmenitiesView />}
-          {view === "leads" && <LeadsView />}
+          {view === "leads" && <LeadsWorkspace />}
           {view === "inquiries" && <InquiriesView />}
           {view === "clients" && <ClientsView />}
           {view === "blog" && <BlogView />}
@@ -267,7 +192,6 @@ function AdminDashboard() {
         </main>
       </div>
 
-      {formOpen && <CareerDialog form={form} editing={editingCareer !== null} saving={saving} onChange={setForm} onClose={() => setFormOpen(false)} onSubmit={saveCareer} />}
     </div>
   );
 }
@@ -301,19 +225,6 @@ function StatTile({ icon, tone, value, label, detail }: { icon: React.ReactNode;
 
 function Activity({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return <div className="ib-admin-activity"><span className="ib-admin-activity-icon">{icon}</span><div><strong>{title}</strong><p>{text}</p></div></div>;
-}
-
-function CareersView({ careers, publishedCareers, loading, onAdd, onEdit, onDelete }: { careers: Career[]; publishedCareers: number; loading: boolean; onAdd: () => void; onEdit: (career: Career) => void; onDelete: (career: Career) => void }) {
-  return <>
-    <div className="ib-admin-page-header"><div><h1>Careers</h1><p>Manage the job openings displayed on the public website.</p></div><Button onClick={onAdd}><Plus /> Add New Career</Button></div>
-    <div className="ib-admin-stat-grid ib-admin-career-stats"><StatTile icon={<BriefcaseBusiness />} tone="blue" value={String(careers.length)} label="Total Careers" detail="All listings" /><StatTile icon={<CheckCircle2 />} tone="green" value={String(publishedCareers)} label="Published" detail="Visible publicly" /><StatTile icon={<FileText />} tone="orange" value={String(careers.length - publishedCareers)} label="Drafts" detail="Not visible publicly" /></div>
-    <section className="ib-admin-card"><div className="ib-admin-card-header"><div><h3>Career Listings</h3><p className="ib-admin-card-subtitle">Create, edit or remove opportunities for the IronBridge team.</p></div><Button variant="outline" size="sm" onClick={onAdd}><Plus /> Add Career</Button></div><div className="ib-admin-table-wrap">{loading ? <div className="ib-admin-empty">Loading career listings…</div> : careers.length === 0 ? <div className="ib-admin-empty">No career listings yet. Add your first opportunity.</div> : <table className="ib-admin-data-table"><thead><tr><th>Role</th><th>Department</th><th>Location</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>{careers.map((career) => <tr key={career.id}><td><div className="ib-admin-lead-cell"><span className="ib-admin-table-avatar"><BriefcaseBusiness /></span><div><strong>{career.title}</strong><small>{career.summary || "No summary added"}</small></div></div></td><td>{career.department}</td><td>{career.location}</td><td>{career.employment_type}</td><td><span className={`ib-admin-status ${career.status.toLowerCase()}`}>{career.status}</span></td><td><div className="ib-admin-row-actions"><Button variant="ghost" size="icon" aria-label={`Edit ${career.title}`} onClick={() => onEdit(career)}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${career.title}`} onClick={() => onDelete(career)}><Trash2 /></Button></div></td></tr>)}</tbody></table>}</div></section>
-  </>;
-}
-
-function CareerDialog({ form, editing, saving, onChange, onClose, onSubmit }: { form: CareerForm; editing: boolean; saving: boolean; onChange: (form: CareerForm) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
-  function update(field: keyof CareerForm, value: string) { onChange({ ...form, [field]: value }); }
-  return <div className="ib-admin-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="ib-admin-dialog" role="dialog" aria-modal="true" aria-labelledby="career-dialog-title"><div className="ib-admin-dialog-header"><div><h2 id="career-dialog-title">{editing ? "Edit Career" : "Add New Career"}</h2><p>Keep the public careers page up to date.</p></div><Button variant="ghost" size="icon" aria-label="Close career form" onClick={onClose}><X /></Button></div><form onSubmit={onSubmit} className="ib-admin-form"><div className="ib-admin-form-grid"><label>Job Title<input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="e.g. Property Manager" /></label><label>Department<input required value={form.department} onChange={(event) => update("department", event.target.value)} placeholder="e.g. Operations" /></label><label>Location<input required value={form.location} onChange={(event) => update("location", event.target.value)} placeholder="e.g. Nairobi, Kenya" /></label><label>Employment Type<select value={form.employment_type} onChange={(event) => update("employment_type", event.target.value)}><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></label><label>Experience<input required value={form.experience} onChange={(event) => update("experience", event.target.value)} placeholder="e.g. 3-5 Yrs Exp" /></label><label>Status<select value={form.status} onChange={(event) => update("status", event.target.value)}><option>Published</option><option>Draft</option></select></label></div><label>Short Summary<textarea required rows={3} value={form.summary} onChange={(event) => update("summary", event.target.value)} placeholder="A concise description shown on the careers page." /></label><label>Full Description<textarea required rows={5} value={form.description} onChange={(event) => update("description", event.target.value)} placeholder="Describe the role, responsibilities and requirements." /></label><div className="ib-admin-dialog-actions"><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save Changes" : "Add Career"}</Button></div></form></section></div>;
 }
 
 function PageHeader({ title, subtitle, action }: { title: string; subtitle: string; action?: React.ReactNode }) {
@@ -384,22 +295,7 @@ function AmenitiesView() {
 }
 
 function LeadsView() {
-  return (
-    <CrudView
-      table="admin_leads"
-      title="Leads"
-      subtitle="Enquiries from people looking for industrial space."
-      singular="Lead"
-      fields={[
-        { key: "name", label: "Name" },
-        { key: "company", label: "Company", required: false },
-        { key: "email", label: "Email", type: "email", required: false },
-        { key: "phone", label: "Phone", required: false },
-        { key: "status", label: "Status", type: "select", options: ["New", "Contacted", "Qualified", "Converted", "Lost"], status: true },
-        { key: "requirement", label: "Requirement", type: "textarea", inTable: false, required: false },
-      ]}
-    />
-  );
+  return <LeadsWorkspace />;
 }
 
 function InquiriesView() {
